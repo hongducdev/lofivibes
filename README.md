@@ -63,8 +63,8 @@ A beautiful and minimalist Lofi music player with Pomodoro timer built with Next
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/hongducdev/lofi.git
-cd lofi
+git clone git@github.com:hongducdev/lofivibes.git
+cd lofivibes
 ```
 
 2. Install dependencies:
