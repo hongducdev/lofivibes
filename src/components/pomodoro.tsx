@@ -28,6 +28,7 @@ const Pomodoro = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [timerState, setTimerState] = useState<TimerState>("work");
     const [completedPomodoros, setCompletedPomodoros] = useState(0);
+    const [config, setConfig] = useState(TIMER_CONFIG);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -43,26 +44,49 @@ const Pomodoro = () => {
         return () => clearInterval(interval);
     }, [isRunning, timeLeft]);
 
+    useEffect(() => {
+        const loadSettings = () => {
+            const savedSettings = localStorage.getItem("pomodoroSettings");
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                const newConfig = {
+                    work: settings.work * 60,
+                    break: settings.break * 60,
+                    longBreak: settings.longBreak * 60,
+                };
+                setConfig(newConfig);
+                if (!isRunning) {
+                    setTimeLeft(newConfig[timerState]);
+                }
+            }
+        };
+
+        loadSettings();
+        window.addEventListener("pomodoroSettingsChanged", loadSettings);
+        return () =>
+            window.removeEventListener("pomodoroSettingsChanged", loadSettings);
+    }, [isRunning, timerState]);
+
     const handleTimerComplete = () => {
         if (timerState === "work") {
             setCompletedPomodoros((prev) => prev + 1);
             if (completedPomodoros === 3) {
                 setTimerState("longBreak");
-                setTimeLeft(TIMER_CONFIG.longBreak);
+                setTimeLeft(config.longBreak);
                 setCompletedPomodoros(0);
             } else {
                 setTimerState("break");
-                setTimeLeft(TIMER_CONFIG.break);
+                setTimeLeft(config.break);
             }
         } else {
             setTimerState("work");
-            setTimeLeft(TIMER_CONFIG.work);
+            setTimeLeft(config.work);
         }
         setIsRunning(false);
     };
 
     const handleReset = () => {
-        setTimeLeft(TIMER_CONFIG[timerState]);
+        setTimeLeft(config[timerState]);
         setIsRunning(false);
     };
 
@@ -87,7 +111,9 @@ const Pomodoro = () => {
                         className="text-zinc-900 dark:text-zinc-100 font-mono"
                     />
                 ))}
-                <span className="text-zinc-400 dark:text-zinc-500 font-mono">:</span>
+                <span className="text-zinc-400 dark:text-zinc-500 font-mono">
+                    :
+                </span>
                 {secsStr.split("").map((digit, i) => (
                     <NumberFlow
                         key={`sec-${i}`}
@@ -152,8 +178,7 @@ const Pomodoro = () => {
                                 strokeWidth="4"
                                 strokeDasharray={283}
                                 strokeDashoffset={
-                                    283 -
-                                    (timeLeft / TIMER_CONFIG[timerState]) * 283
+                                    283 - (timeLeft / config[timerState]) * 283
                                 }
                                 className={`${
                                     timerState === "work"
@@ -224,9 +249,7 @@ const Pomodoro = () => {
                                 key={state}
                                 onClick={() => {
                                     setTimerState(state as TimerState);
-                                    setTimeLeft(
-                                        TIMER_CONFIG[state as TimerState]
-                                    );
+                                    setTimeLeft(config[state as TimerState]);
                                     setIsRunning(false);
                                 }}
                                 className={`px-3 py-1 rounded-full text-xs ${
