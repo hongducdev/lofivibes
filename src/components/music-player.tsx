@@ -62,7 +62,7 @@ export const MusicPlayer = () => {
     const [currentChannel, setCurrentChannel] = useState<Channel>(CHANNELS[0]);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const playerRef = useRef<YouTubePlayer>(null);
-    const wasPlayingRef = useRef(false);
+    const autoPlayTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
     const handlePlayPause = useCallback(() => {
         if (isPlaying) {
@@ -84,8 +84,17 @@ export const MusicPlayer = () => {
 
     const handleChannelChange = useCallback(
         (channel: Channel) => {
-            wasPlayingRef.current = isPlaying;
             setCurrentChannel(channel);
+            if (isPlaying) {
+                // Clear any existing timeout
+                if (autoPlayTimeoutRef.current) {
+                    clearTimeout(autoPlayTimeoutRef.current);
+                }
+                // Wait for the video to load then play
+                autoPlayTimeoutRef.current = setTimeout(() => {
+                    playerRef.current?.playVideo();
+                }, 1000);
+            }
         },
         [isPlaying]
     );
@@ -181,20 +190,16 @@ export const MusicPlayer = () => {
             hd: 1,
             vq: "hd1080",
             enablejsapi: 1,
-            origin: window.location.origin,
         },
     };
 
     const onReady = (event: YouTubeEvent) => {
         playerRef.current = event.target;
         event.target.setPlaybackQuality("hd1080");
-        if (wasPlayingRef.current) {
-            event.target.playVideo();
-        }
+        event.target.setVolume(volume);
     };
 
     const onStateChange = (event: YouTubeEvent) => {
-        // -1: unstarted, 0: ended, 1: playing, 2: paused, 3: buffering, 5: video cued
         switch (event.data) {
             case 1: // playing
                 setIsPlaying(true);
