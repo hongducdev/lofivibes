@@ -1,3 +1,4 @@
+import AboutMe from "@/components/about-me";
 import Pomodoro from "@/components/pomodoro";
 import Settings from "@/components/settings";
 import Time from "@/components/time";
@@ -115,6 +116,7 @@ export default function Home() {
                 <Settings />
                 <TodoList />
                 <Pomodoro />
+                <AboutMe />
             </div>
         </div>
     );
