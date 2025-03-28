@@ -19,8 +19,8 @@ const Time = () => {
     const seconds = time.getSeconds().toString().padStart(2, "0");
 
     return (
-        <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-2 text-4xl font-mono tracking-tight">
+        <div className="px-6 py-4 rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-center space-x-3 text-5xl font-mono tracking-tight">
                 <div className="flex">
                     {hours.split("").map((digit, i) => (
                         <NumberFlow
@@ -28,11 +28,11 @@ const Time = () => {
                             value={parseInt(digit) as Value}
                             trend={0}
                             format={{ notation: "compact" }}
-                            className="w-8 text-center font-bold text-zinc-900 dark:text-zinc-100"
+                            className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
                         />
                     ))}
                 </div>
-                <span className="text-zinc-400 dark:text-zinc-500 animate-pulse">
+                <span className="text-primary/60 dark:text-primary/40 animate-pulse">
                     :
                 </span>
                 <div className="flex">
@@ -42,11 +42,11 @@ const Time = () => {
                             value={parseInt(digit) as Value}
                             trend={0}
                             format={{ notation: "compact" }}
-                            className="w-8 text-center font-bold text-zinc-900 dark:text-zinc-100"
+                            className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
                         />
                     ))}
                 </div>
-                <span className="text-zinc-400 dark:text-zinc-500 animate-pulse">
+                <span className="text-primary/60 dark:text-primary/40 animate-pulse">
                     :
                 </span>
                 <div className="flex">
@@ -56,7 +56,7 @@ const Time = () => {
                             value={parseInt(digit) as Value}
                             trend={0}
                             format={{ notation: "compact" }}
-                            className="w-8 text-center font-bold text-zinc-900 dark:text-zinc-100"
+                            className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
                         />
                     ))}
                 </div>

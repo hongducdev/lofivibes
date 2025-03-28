@@ -130,8 +130,8 @@ const Pomodoro = () => {
     return (
         <Popover>
             <PopoverTrigger
-                className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800"
-                aria-label="Open pomodoro"
+                className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
+                aria-label="Pomodoro timer"
             >
                 <motion.div
                     whileHover={{ scale: 1.1 }}
@@ -140,8 +140,8 @@ const Pomodoro = () => {
                     <RiTimerLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
                 </motion.div>
             </PopoverTrigger>
-            <PopoverContent className="w-80 bg-zinc-50 dark:bg-zinc-800">
-                <div className="flex flex-col items-center space-y-4">
+            <PopoverContent className="w-80 p-4 bg-background/80 backdrop-blur-md border-zinc-200 dark:border-zinc-800">
+                <div className="flex flex-col space-y-4">
                     <div className="flex items-center justify-between w-full">
                         <h5 className="text-zinc-900 dark:text-zinc-100 text-sm font-medium">
                             {timerState === "work"
