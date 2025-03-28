@@ -14,23 +14,27 @@ const Time = () => {
         return () => clearInterval(timer);
     }, []);
 
-    const hours = time.getHours().toString().padStart(2, "0");
+    const hours = time.getHours();
     const minutes = time.getMinutes().toString().padStart(2, "0");
-    const seconds = time.getSeconds().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const displayHours = hours % 12 || 12;
 
     return (
         <div className="px-6 py-4 rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center space-x-3 text-5xl font-mono tracking-tight">
                 <div className="flex">
-                    {hours.split("").map((digit, i) => (
-                        <NumberFlow
-                            key={`hour-${i}`}
-                            value={parseInt(digit) as Value}
-                            trend={0}
-                            format={{ notation: "compact" }}
-                            className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
-                        />
-                    ))}
+                    {displayHours
+                        .toString()
+                        .split("")
+                        .map((digit, i) => (
+                            <NumberFlow
+                                key={`hour-${i}`}
+                                value={parseInt(digit) as Value}
+                                trend={0}
+                                format={{ notation: "compact" }}
+                                className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
+                            />
+                        ))}
                 </div>
                 <span className="text-primary/60 dark:text-primary/40 animate-pulse">
                     :
@@ -46,20 +50,9 @@ const Time = () => {
                         />
                     ))}
                 </div>
-                <span className="text-primary/60 dark:text-primary/40 animate-pulse">
-                    :
+                <span className="text-zinc-900 dark:text-zinc-100 text-2xl ml-2 font-bold">
+                    {ampm}
                 </span>
-                <div className="flex">
-                    {seconds.split("").map((digit, i) => (
-                        <NumberFlow
-                            key={`sec-${i}`}
-                            value={parseInt(digit) as Value}
-                            trend={0}
-                            format={{ notation: "compact" }}
-                            className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
-                        />
-                    ))}
-                </div>
             </div>
         </div>
     );

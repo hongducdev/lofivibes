@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import YouTube, { YouTubePlayer, YouTubeEvent } from "react-youtube";
 import {
     Volume2,
@@ -9,6 +9,9 @@ import {
     Pause,
     SkipForward,
     Radio,
+    Maximize2,
+    Minimize2,
+    PictureInPicture2,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -16,6 +19,7 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { Slider } from "./ui/slider";
 
 interface Channel {
     id: string;
@@ -56,7 +60,22 @@ export const MusicPlayer = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(50);
     const [currentChannel, setCurrentChannel] = useState<Channel>(CHANNELS[0]);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const playerRef = useRef<YouTubePlayer>(null);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        return () => {
+            document.removeEventListener(
+                "fullscreenchange",
+                handleFullscreenChange
+            );
+        };
+    }, []);
 
     const opts = {
         height: "100%",
@@ -86,8 +105,8 @@ export const MusicPlayer = () => {
         setIsPlaying(!isPlaying);
     };
 
-    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newVolume = parseInt(e.target.value);
+    const handleVolumeChange = (value: number[]) => {
+        const newVolume = value[0];
         setVolume(newVolume);
         if (playerRef.current) {
             playerRef.current.setVolume(newVolume);
@@ -108,6 +127,33 @@ export const MusicPlayer = () => {
         playerRef.current = event.target;
         event.target.setPlaybackQuality("hd1080");
     };
+
+    const handleFullscreen = useCallback(async () => {
+        if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen();
+            setIsFullscreen(true);
+        } else {
+            await document.exitFullscreen();
+            setIsFullscreen(false);
+        }
+    }, []);
+
+    const handlePictureInPicture = useCallback(async () => {
+        if (!playerRef.current) return;
+
+        try {
+            const iframe = playerRef.current.getIframe();
+            if (!iframe) return;
+
+            if (document.pictureInPictureElement) {
+                await document.exitPictureInPicture();
+            } else {
+                await iframe.requestPictureInPicture();
+            }
+        } catch (error) {
+            console.error("Failed to enter Picture-in-Picture mode:", error);
+        }
+    }, []);
 
     return (
         <>
@@ -199,24 +245,55 @@ export const MusicPlayer = () => {
                                 }}
                                 className="hover:bg-primary/20"
                             >
-                                <SkipForward className="h-5 w-5" />
+                                <SkipForward className="h-6 w-6" />
                             </Button>
+                            <div className="flex items-center gap-4">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() =>
+                                        setVolume(volume === 0 ? 50 : 0)
+                                    }
+                                    className="hover:bg-primary/20"
+                                >
+                                    {volume === 0 ? (
+                                        <VolumeX className="h-6 w-6" />
+                                    ) : (
+                                        <Volume2 className="h-6 w-6" />
+                                    )}
+                                </Button>
+                                <Slider
+                                    value={[volume]}
+                                    min={0}
+                                    max={100}
+                                    onValueChange={handleVolumeChange}
+                                    className="w-24"
+                                />
+                            </div>
                         </div>
-
-                        <div className="flex items-center gap-3">
-                            {volume > 0 ? (
-                                <Volume2 className="h-4 w-4" />
-                            ) : (
-                                <VolumeX className="h-4 w-4" />
-                            )}
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value={volume}
-                                onChange={handleVolumeChange}
-                                className="w-24 h-2 accent-primary bg-primary/20 rounded-full"
-                            />
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-primary/20"
+                                onClick={handlePictureInPicture}
+                                aria-label="Toggle picture in picture"
+                            >
+                                <PictureInPicture2 className="h-5 w-5" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-primary/20"
+                                onClick={handleFullscreen}
+                                aria-label="Toggle fullscreen"
+                            >
+                                {isFullscreen ? (
+                                    <Minimize2 className="h-5 w-5" />
+                                ) : (
+                                    <Maximize2 className="h-5 w-5" />
+                                )}
+                            </Button>
                         </div>
                     </div>
                 </div>

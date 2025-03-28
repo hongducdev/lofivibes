@@ -140,7 +140,7 @@ const Pomodoro = () => {
                     <RiTimerLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
                 </motion.div>
             </PopoverTrigger>
-            <PopoverContent className="w-80 p-4 bg-background/80 backdrop-blur-md border-zinc-200 dark:border-zinc-800">
+            <PopoverContent className="w-80 p-4 bg-background/80 backdrop-blur-md border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center">
                 <div className="flex flex-col space-y-4">
                     <div className="flex items-center justify-between w-full">
                         <h5 className="text-zinc-900 dark:text-zinc-100 text-sm font-medium">
@@ -198,7 +198,7 @@ const Pomodoro = () => {
                         </div>
                     </motion.div>
 
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center justify-center space-x-2">
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -243,7 +243,7 @@ const Pomodoro = () => {
                         </motion.div>
                     </div>
 
-                    <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center justify-between w-full gap-2">
                         {["work", "break", "longBreak"].map((state) => (
                             <motion.button
                                 key={state}
