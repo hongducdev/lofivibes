@@ -7,6 +7,7 @@ Immerse yourself in a world of relaxing lofi music and chill beats. LofiVibes is
 ## ✨ Features
 
 -   🎵 Curated collection of lofi music
+-   ✅ Built-in TodoList with local storage
 -   🎨 Beautiful, minimalist interface
 -   🌙 Dark/Light mode
 -   ⏯️ Seamless playback controls
