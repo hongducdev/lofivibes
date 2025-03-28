@@ -1,3 +1,4 @@
+import Pomodoro from "@/components/pomodoro";
 import TodoList from "@/components/todolist";
 import Image from "next/image";
 
@@ -101,6 +102,9 @@ export default function Home() {
       </footer>
       <div className="absolute bottom-10 right-10">
         <TodoList />
+      </div>
+      <div className="absolute bottom-10 right-28">
+        <Pomodoro />
       </div>
     </div>
   );
