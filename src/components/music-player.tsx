@@ -62,6 +62,96 @@ export const MusicPlayer = () => {
     const [currentChannel, setCurrentChannel] = useState<Channel>(CHANNELS[0]);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const playerRef = useRef<YouTubePlayer>(null);
+    const wasPlayingRef = useRef(false);
+
+    const handlePlayPause = useCallback(() => {
+        if (isPlaying) {
+            playerRef.current?.pauseVideo();
+        } else {
+            playerRef.current?.playVideo();
+            playerRef.current?.setPlaybackQuality("hd1080");
+        }
+        setIsPlaying(!isPlaying);
+    }, [isPlaying]);
+
+    const handleVolumeChange = useCallback((value: number[]) => {
+        const newVolume = value[0];
+        setVolume(newVolume);
+        if (playerRef.current) {
+            playerRef.current.setVolume(newVolume);
+        }
+    }, []);
+
+    const handleChannelChange = useCallback(
+        (channel: Channel) => {
+            wasPlayingRef.current = isPlaying;
+            setCurrentChannel(channel);
+        },
+        [isPlaying]
+    );
+
+    const handleKeyPress = useCallback(
+        (e: KeyboardEvent) => {
+            if (
+                document.activeElement?.tagName === "INPUT" ||
+                document.activeElement?.tagName === "TEXTAREA"
+            )
+                return;
+
+            switch (e.code) {
+                case "Space":
+                    e.preventDefault();
+                    handlePlayPause();
+                    break;
+                case "ArrowUp":
+                    e.preventDefault();
+                    const newVolumeUp = Math.min(volume + 5, 100);
+                    handleVolumeChange([newVolumeUp]);
+                    break;
+                case "ArrowDown":
+                    e.preventDefault();
+                    const newVolumeDown = Math.max(volume - 5, 0);
+                    handleVolumeChange([newVolumeDown]);
+                    break;
+                case "ArrowLeft":
+                case "ArrowRight":
+                    e.preventDefault();
+                    const currentIndex = CHANNELS.findIndex(
+                        (c) => c.id === currentChannel.id
+                    );
+                    const nextIndex =
+                        e.code === "ArrowRight"
+                            ? (currentIndex + 1) % CHANNELS.length
+                            : (currentIndex - 1 + CHANNELS.length) %
+                              CHANNELS.length;
+                    handleChannelChange(CHANNELS[nextIndex]);
+                    break;
+            }
+        },
+        [
+            volume,
+            currentChannel,
+            handleVolumeChange,
+            handlePlayPause,
+            handleChannelChange,
+        ]
+    );
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        window.addEventListener("keydown", handleKeyPress);
+        return () => {
+            window.removeEventListener("keydown", handleKeyPress);
+        };
+    }, [
+        volume,
+        currentChannel,
+        handleVolumeChange,
+        handlePlayPause,
+        handleChannelChange,
+        handleKeyPress,
+    ]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -95,37 +185,24 @@ export const MusicPlayer = () => {
         },
     };
 
-    const handlePlayPause = () => {
-        if (isPlaying) {
-            playerRef.current?.pauseVideo();
-        } else {
-            playerRef.current?.playVideo();
-            playerRef.current?.setPlaybackQuality("hd1080");
-        }
-        setIsPlaying(!isPlaying);
-    };
-
-    const handleVolumeChange = (value: number[]) => {
-        const newVolume = value[0];
-        setVolume(newVolume);
-        if (playerRef.current) {
-            playerRef.current.setVolume(newVolume);
-        }
-    };
-
-    const handleChannelChange = (channel: Channel) => {
-        setCurrentChannel(channel);
-        if (isPlaying) {
-            setIsPlaying(false);
-            setTimeout(() => {
-                setIsPlaying(true);
-            }, 500);
-        }
-    };
-
     const onReady = (event: YouTubeEvent) => {
         playerRef.current = event.target;
         event.target.setPlaybackQuality("hd1080");
+        if (wasPlayingRef.current) {
+            event.target.playVideo();
+        }
+    };
+
+    const onStateChange = (event: YouTubeEvent) => {
+        // -1: unstarted, 0: ended, 1: playing, 2: paused, 3: buffering, 5: video cued
+        switch (event.data) {
+            case 1: // playing
+                setIsPlaying(true);
+                break;
+            case 2: // paused
+                setIsPlaying(false);
+                break;
+        }
     };
 
     const handleFullscreen = useCallback(async () => {
@@ -164,6 +241,7 @@ export const MusicPlayer = () => {
                         videoId={currentChannel.id}
                         opts={opts}
                         onReady={onReady}
+                        onStateChange={onStateChange}
                         className="w-full h-full"
                         iframeClassName="absolute top-1/2 left-1/2 w-full h-full -translate-x-1/2 -translate-y-1/2 object-cover"
                     />
