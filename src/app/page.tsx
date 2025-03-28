@@ -1,6 +1,7 @@
 import AboutMe from "@/components/about-me";
 import Pomodoro from "@/components/pomodoro";
 import Settings from "@/components/settings";
+import ThemeToggle from "@/components/theme-toggle";
 import Time from "@/components/time";
 import TodoList from "@/components/todolist";
 import Image from "next/image";
@@ -114,6 +115,7 @@ export default function Home() {
             </footer>
             <div className="absolute bottom-10 right-10 flex flex-row-reverse gap-4">
                 <Settings />
+                <ThemeToggle />
                 <TodoList />
                 <Pomodoro />
                 <AboutMe />
