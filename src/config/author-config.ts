@@ -19,4 +19,5 @@ export const authorConfig = {
             icon: "globe",
         },
     ],
+    buyMeACoffee: "https://buymeacoffee.com/hongducdev",
 } as const;

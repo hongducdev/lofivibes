@@ -1,45 +1,70 @@
 # 🌿 LofiVibes
 
-Immerse yourself in a world of relaxing lofi music and chill beats. LofiVibes is your perfect companion for studying, working, or just unwinding.
+Immerse yourself in soothing lofi beats. LofiVibes offers high-quality lofi music for studying, working, and unwinding. Tune in and relax.
 
-![LofiVibes Banner](public/banner.png)
+A beautiful and minimalist Lofi music player with Pomodoro timer built with Next.js 15, TypeScript, and modern web technologies.
 
-## ✨ Features
+## Features
 
--   🎵 Curated collection of lofi music
--   ✅ Built-in TodoList with local storage
--   🎨 Beautiful, minimalist interface
--   🌙 Dark/Light mode
--   ⏯️ Seamless playback controls
--   📱 Fully responsive design
--   🔥 Real-time music visualization
--   💾 Offline playback support
--   🎨 Customizable themes
+-   🎵 Lofi Music Player
 
-## 🛠️ Tech Stack
+    -   Play/pause, skip, and volume control
+    -   Beautiful visualizations
+    -   Dark/light mode support
 
--   **Frontend Framework:** Next.js 15 (React)
--   **Language:** TypeScript
--   **Styling:** TailwindCSS
--   **UI Components:** shadcn/ui
--   **State Management:** Zustand
--   **Audio Processing:** Howler.js
--   **Animations:** Framer Motion
--   **Database:** Supabase
--   **Deployment:** Vercel
+-   ⏰ Pomodoro Timer
 
-## 📦 Prerequisites
+    -   Customizable work/break intervals
+    -   Visual and audio notifications
+    -   Session tracking
 
--   Node.js (v18.17 or higher)
--   pnpm (v8.0 or higher)
+-   🎨 Modern UI
 
-## 🚀 Getting Started
+    -   Clean and minimalist design
+    -   Smooth animations with Framer Motion
+    -   Fully responsive layout
+    -   Dark mode support
+
+-   👤 About Section
+    -   Author information
+    -   Social media links
+    -   Support via Buy Me a Coffee (with QR code)
+
+## Tech Stack
+
+### Core
+
+-   [Next.js 15](https://nextjs.org/) - React framework with Turbopack
+-   [React 19](https://react.dev/) - UI library
+-   [TypeScript](https://www.typescriptlang.org/) - Type safety
+
+### Styling & UI
+
+-   [Tailwind CSS](https://tailwindcss.com/) - Styling
+-   [Shadcn/ui](https://ui.shadcn.com/) - UI components (Radix UI)
+-   [Framer Motion](https://www.framer.com/motion/) - Animations
+-   [Lucide React](https://lucide.dev/) - Icons
+-   [React Icons](https://react-icons.github.io/react-icons/) - Additional icons
+
+### State Management & Forms
+
+-   [Zustand](https://zustand-demo.pmnd.rs/) - State management
+-   [React Hook Form](https://react-hook-form.com/) - Form handling
+-   [Zod](https://zod.dev/) - Schema validation
+
+### Developer Experience
+
+-   [ESLint](https://eslint.org/) - Code linting
+-   [TypeScript](https://www.typescriptlang.org/) - Static typing
+-   [Next.js](https://nextjs.org/) - Development environment
+
+## Getting Started
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/hongducdev/lofivibes.git
-cd lofivibes
+git clone https://github.com/hongducdev/lofi.git
+cd lofi
 ```
 
 2. Install dependencies:
@@ -48,59 +73,43 @@ cd lofivibes
 pnpm install
 ```
 
-3. Set up environment variables:
-
-```bash
-cp .env.example .env.local
-```
-
-4. Run the development server:
+3. Run the development server:
 
 ```bash
 pnpm dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🔧 Environment Variables
+## Environment Variables
 
-Create a `.env.local` file with the following variables:
+Create a `.env.local` file in the root directory with the following variables:
 
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-## 📝 Project Structure
-
-```
-lofivibes/
-├── app/              # Next.js app directory
-├── components/       # Reusable UI components
-├── lib/             # Utility functions and hooks
-├── public/          # Static assets
-├── styles/          # Global styles
-└── types/           # TypeScript type definitions
+```env
+# Add any required environment variables here
 ```
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Support
 
--   Music provided by various lofi artists
--   Inspiration from [Lofi Girl](https://www.youtube.com/c/LofiGirl)
--   Icons from [Heroicons](https://heroicons.com/)
+If you like this project, please consider:
 
-## 📞 Support
+-   ⭐ Starring the repository
+-   🐛 Reporting bugs
+-   🤝 Contributing to the code
+-   ☕ [Buying me a coffee](https://buymeacoffee.com/hongducdev)
 
-For support, please open an issue in the GitHub repository or contact us at support@lofivibes.com
+## Author
+
+-   Hong Duc ([@hongducdev](https://github.com/hongducdev))
+-   Email: hey@hongduc.dev
+-   Website: [https://lofavibes.com](https://lofavibes.com)
 
 ---
-
-Made with ❤️ by [Hong Duc Dev](https://hongduc.dev)
