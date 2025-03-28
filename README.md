@@ -35,7 +35,7 @@ A beautiful and minimalist Lofi music player with Pomodoro timer built with Next
 ### Core
 
 -   [Next.js 15](https://nextjs.org/) - React framework with Turbopack
--   [React 19](https://react.dev/) - UI library
+-   [React 19](https://react.dev/) - JavaScript library for building user interfaces
 -   [TypeScript](https://www.typescriptlang.org/) - Type safety
 
 ### Styling & UI
