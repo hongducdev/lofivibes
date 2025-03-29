@@ -5,6 +5,7 @@ import { pusherClient } from "@/lib/pusher";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Skeleton } from "./ui/skeleton";
 
 interface Message {
     id: string;
@@ -13,19 +14,34 @@ interface Message {
     timestamp: number;
 }
 
+const MessageSkeleton = () => (
+    <div className="mb-4 space-y-2">
+        <Skeleton className="h-4 w-20" />
+        <Skeleton className="h-10 w-[80%]" />
+    </div>
+);
+
 export const Chat = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
     const [username] = useState(
         `User_${Math.random().toString(36).slice(2, 7)}`
     );
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        setIsLoading(true);
         fetch("/api/chat")
             .then((res) => res.json())
-            .then((data) => setMessages(data.reverse()))
-            .catch((error) => console.error("Error loading messages:", error));
+            .then((data) => {
+                setMessages(data.reverse());
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error("Error loading messages:", error);
+                setIsLoading(false);
+            });
 
         const channel = pusherClient.subscribe("chat");
 
@@ -76,20 +92,28 @@ export const Chat = () => {
                 <h3 className="font-semibold">Chat Room</h3>
             </div>
             <div className="h-96 overflow-y-auto p-4">
-                {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        className={cn(
-                            "mb-4 p-2 rounded-lg max-w-[80%]",
-                            msg.sender === username
-                                ? "ml-auto bg-primary text-primary-foreground"
-                                : "bg-muted"
-                        )}
-                    >
-                        <p className="text-sm font-medium">{msg.sender}</p>
-                        <p>{msg.text}</p>
-                    </div>
-                ))}
+                {isLoading ? (
+                    <>
+                        <MessageSkeleton />
+                        <MessageSkeleton />
+                        <MessageSkeleton />
+                    </>
+                ) : (
+                    messages.map((msg) => (
+                        <div
+                            key={msg.id}
+                            className={cn(
+                                "mb-4 p-2 rounded-lg max-w-[80%]",
+                                msg.sender === username
+                                    ? "ml-auto bg-primary text-primary-foreground"
+                                    : "bg-muted"
+                            )}
+                        >
+                            <p className="text-sm font-medium">{msg.sender}</p>
+                            <p>{msg.text}</p>
+                        </div>
+                    ))
+                )}
                 <div ref={messagesEndRef} />
             </div>
             <form onSubmit={handleSubmit} className="p-4 border-t">
@@ -99,8 +123,9 @@ export const Chat = () => {
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type a message..."
                         className="flex-1"
+                        disabled={isLoading}
                     />
-                    <Button type="submit" size="sm">
+                    <Button type="submit" size="sm" disabled={isLoading}>
                         Send
                     </Button>
                 </div>
