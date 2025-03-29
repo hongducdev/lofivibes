@@ -137,7 +137,18 @@ export const VideoBackground = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                    onLoadStart={() => {
+                        if (videoRef.current) {
+                            videoRef.current.play().catch((error) => {
+                                console.warn(
+                                    "Video autoplay was prevented:",
+                                    error
+                                );
+                            });
+                        }
+                    }}
                 />
                 <video
                     ref={nextVideoRef}
@@ -145,7 +156,19 @@ export const VideoBackground = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
+                    poster="/assets/videos/poster.jpg"
                     className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                    onLoadStart={() => {
+                        if (nextVideoRef.current) {
+                            nextVideoRef.current.play().catch((error) => {
+                                console.warn(
+                                    "Video autoplay was prevented:",
+                                    error
+                                );
+                            });
+                        }
+                    }}
                 />
             </div>
             <audio ref={rainAudioRef} loop src="/assets/sounds/rain_city.mp3" />

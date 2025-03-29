@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import AboutMe from "@/components/about-me";
 import Pomodoro from "@/components/pomodoro";
 import Settings from "@/components/settings";
@@ -7,8 +10,11 @@ import ThemeToggle from "@/components/theme-toggle";
 import { VideoBackground } from "@/components/video-background";
 import { MusicPlayer } from "@/components/music-player";
 import SoundControls from "@/components/sound-controls";
+import ShowNoti from "@/components/show-noti";
 
 export default function Home() {
+    const [showGuide, setShowGuide] = useState(true);
+
     return (
         <div className="relative min-h-screen">
             <VideoBackground />
@@ -29,6 +35,7 @@ export default function Home() {
                 <div className="flex justify-center">
                     <SoundControls />
                 </div>
+                <ShowNoti show={showGuide} setShow={setShowGuide} />
             </div>
         </div>
     );
