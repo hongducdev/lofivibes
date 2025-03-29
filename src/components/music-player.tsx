@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import YouTube, { YouTubePlayer, YouTubeEvent } from "react-youtube";
+import { motion, AnimatePresence } from "framer-motion";
 import {
     Volume2,
     VolumeX,
@@ -37,7 +38,7 @@ const CHANNELS: Channel[] = [
     {
         id: "WelpRyoV0UY",
         name: "Chill with Taiki",
-        description: "lofi hip hop radio 🌿 chill beats to relax/study to",
+        description: "lofi hip hop radio chill beats to relax/study to",
     },
     {
         id: "7NOSDKb0HlU",
@@ -47,7 +48,7 @@ const CHANNELS: Channel[] = [
     {
         id: "Na0w3Mz46GA",
         name: "Lofi Girl",
-        description: "asian lofi radio ⛩️ beats to relax/study to",
+        description: "asian lofi radio beats to relax/study to",
     },
     {
         id: "5yx6BWlEVcY",
@@ -58,11 +59,62 @@ const CHANNELS: Channel[] = [
 
 export const MusicPlayer = () => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [volume, setVolume] = useState(50);
+    const [volume, setVolume] = useState(100);
     const [currentChannel, setCurrentChannel] = useState<Channel>(CHANNELS[0]);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const playerRef = useRef<YouTubePlayer>(null);
     const autoPlayTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+    const opts = {
+        width: "100%",
+        height: "100%",
+        playerVars: {
+            autoplay: 0,
+            controls: 0,
+            modestbranding: 1,
+            loop: 1,
+            playlist: currentChannel.id,
+            playsinline: 1,
+            rel: 0,
+            showinfo: 0,
+            mute: 0,
+        },
+    };
+
+    const controlsVariants = {
+        hidden: {
+            height: 0,
+            opacity: 0,
+            transition: {
+                height: { duration: 0.2 },
+                opacity: { duration: 0.1 },
+            },
+        },
+        visible: {
+            height: "auto",
+            opacity: 1,
+            transition: {
+                height: { duration: 0.2 },
+                opacity: { duration: 0.2, delay: 0.1 },
+            },
+        },
+    };
+
+    const controlsContentVariants = {
+        hidden: {
+            y: -8,
+            opacity: 0,
+        },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 0.2,
+                delay: 0.1,
+            },
+        },
+    };
 
     const handlePlayPause = useCallback(() => {
         if (isPlaying) {
@@ -147,20 +199,11 @@ export const MusicPlayer = () => {
     );
 
     useEffect(() => {
-        if (typeof window === "undefined") return;
-
         window.addEventListener("keydown", handleKeyPress);
         return () => {
             window.removeEventListener("keydown", handleKeyPress);
         };
-    }, [
-        volume,
-        currentChannel,
-        handleVolumeChange,
-        handlePlayPause,
-        handleChannelChange,
-        handleKeyPress,
-    ]);
+    }, [handleKeyPress]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -176,27 +219,11 @@ export const MusicPlayer = () => {
         };
     }, []);
 
-    const opts = {
-        height: "100%",
-        width: "100%",
-        playerVars: {
-            autoplay: 0,
-            controls: 0,
-            modestbranding: 1,
-            playsinline: 1,
-            rel: 0,
-            showinfo: 0,
-            mute: 0,
-            hd: 1,
-            vq: "hd1080",
-            enablejsapi: 1,
-        },
-    };
-
     const onReady = (event: YouTubeEvent) => {
         playerRef.current = event.target;
-        event.target.setPlaybackQuality("hd1080");
-        event.target.setVolume(volume);
+        if (playerRef.current) {
+            playerRef.current.setVolume(volume);
+        }
     };
 
     const onStateChange = (event: YouTubeEvent) => {
@@ -239,31 +266,40 @@ export const MusicPlayer = () => {
 
     return (
         <>
-            <div className="fixed inset-0 -z-10 overflow-hidden">
-                <div className="absolute inset-0 bg-black/30 z-10" />
-                <div className="relative w-screen h-screen">
-                    <YouTube
-                        videoId={currentChannel.id}
-                        opts={opts}
-                        onReady={onReady}
-                        onStateChange={onStateChange}
-                        className="w-full h-full"
-                        iframeClassName="absolute top-1/2 left-1/2 w-full h-full -translate-x-1/2 -translate-y-1/2 object-cover"
-                    />
-                </div>
+            <div className="fixed inset-0 -z-20 opacity-0 pointer-events-none">
+                <YouTube
+                    videoId={currentChannel.id}
+                    opts={opts}
+                    onReady={onReady}
+                    onStateChange={onStateChange}
+                    className="w-full h-full"
+                />
             </div>
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur-md p-6 rounded-2xl shadow-lg z-50 w-[400px] transition-all duration-300 hover:bg-background/90">
-                <div className="flex flex-col gap-4">
+            <motion.div
+                className="fixed bottom-6 left-1/2 bg-background/80 backdrop-blur-md p-6 rounded-2xl shadow-lg z-50 w-[400px]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{ x: "-50%" }}
+                onHoverStart={() => setIsHovered(true)}
+                onHoverEnd={() => setIsHovered(false)}
+            >
+                <div className={`flex flex-col ${isHovered ? "gap-4" : ""}`}>
                     {/* Channel info */}
                     <div className="flex items-center justify-between">
-                        <div className="flex flex-col">
+                        <motion.div
+                            className="flex flex-col"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                        >
                             <h3 className="font-semibold text-lg">
                                 {currentChannel.name}
                             </h3>
                             <p className="text-sm text-muted-foreground">
                                 {currentChannel.description}
                             </p>
-                        </div>
+                        </motion.div>
                         <HoverCard>
                             <HoverCardTrigger asChild>
                                 <Button
@@ -301,86 +337,108 @@ export const MusicPlayer = () => {
                     </div>
 
                     {/* Controls */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={handlePlayPause}
-                                className="hover:bg-primary/20"
+                    <AnimatePresence>
+                        <motion.div
+                            variants={controlsVariants}
+                            initial="hidden"
+                            animate={isHovered ? "visible" : "hidden"}
+                            className="overflow-hidden"
+                        >
+                            <motion.div
+                                variants={controlsContentVariants}
+                                className="flex flex-col gap-4"
                             >
-                                {isPlaying ? (
-                                    <Pause className="h-6 w-6" />
-                                ) : (
-                                    <Play className="h-6 w-6" />
-                                )}
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                    const currentIndex = CHANNELS.findIndex(
-                                        (c) => c.id === currentChannel.id
-                                    );
-                                    const nextIndex =
-                                        (currentIndex + 1) % CHANNELS.length;
-                                    handleChannelChange(CHANNELS[nextIndex]);
-                                }}
-                                className="hover:bg-primary/20"
-                            >
-                                <SkipForward className="h-6 w-6" />
-                            </Button>
-                            <div className="flex items-center gap-4">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() =>
-                                        setVolume(volume === 0 ? 50 : 0)
-                                    }
-                                    className="hover:bg-primary/20"
-                                >
-                                    {volume === 0 ? (
-                                        <VolumeX className="h-6 w-6" />
-                                    ) : (
-                                        <Volume2 className="h-6 w-6" />
-                                    )}
-                                </Button>
-                                <Slider
-                                    value={[volume]}
-                                    min={0}
-                                    max={100}
-                                    onValueChange={handleVolumeChange}
-                                    className="w-24"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-primary/20"
-                                onClick={handlePictureInPicture}
-                                aria-label="Toggle picture in picture"
-                            >
-                                <PictureInPicture2 className="h-5 w-5" />
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-primary/20"
-                                onClick={handleFullscreen}
-                                aria-label="Toggle fullscreen"
-                            >
-                                {isFullscreen ? (
-                                    <Minimize2 className="h-5 w-5" />
-                                ) : (
-                                    <Maximize2 className="h-5 w-5" />
-                                )}
-                            </Button>
-                        </div>
-                    </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={handlePlayPause}
+                                            className="hover:bg-primary/20"
+                                        >
+                                            {isPlaying ? (
+                                                <Pause className="h-5 w-5" />
+                                            ) : (
+                                                <Play className="h-5 w-5" />
+                                            )}
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() =>
+                                                handleChannelChange(
+                                                    CHANNELS[
+                                                        (CHANNELS.findIndex(
+                                                            (c) =>
+                                                                c.id ===
+                                                                currentChannel.id
+                                                        ) +
+                                                            1) %
+                                                            CHANNELS.length
+                                                    ]
+                                                )
+                                            }
+                                            className="hover:bg-primary/20"
+                                        >
+                                            <SkipForward className="h-5 w-5" />
+                                        </Button>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={handlePictureInPicture}
+                                            className="hover:bg-primary/20"
+                                        >
+                                            <PictureInPicture2 className="h-5 w-5" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={handleFullscreen}
+                                            className="hover:bg-primary/20"
+                                        >
+                                            {isFullscreen ? (
+                                                <Minimize2 className="h-5 w-5" />
+                                            ) : (
+                                                <Maximize2 className="h-5 w-5" />
+                                            )}
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Volume control */}
+                                <div className="flex items-center gap-4">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() =>
+                                            handleVolumeChange(
+                                                volume > 0 ? [0] : [50]
+                                            )
+                                        }
+                                        className="hover:bg-primary/20"
+                                    >
+                                        {volume === 0 ? (
+                                            <VolumeX className="h-5 w-5" />
+                                        ) : (
+                                            <Volume2 className="h-5 w-5" />
+                                        )}
+                                    </Button>
+                                    <Slider
+                                        value={[volume]}
+                                        onValueChange={handleVolumeChange}
+                                        max={100}
+                                        step={1}
+                                        className="w-full"
+                                    />
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
-            </div>
+            </motion.div>
         </>
     );
 };

@@ -3,8 +3,10 @@ import Pomodoro from "@/components/pomodoro";
 import Settings from "@/components/settings";
 import Time from "@/components/time";
 import TodoList from "@/components/todolist";
-import { MusicPlayer } from "@/components/music-player";
 import ThemeToggle from "@/components/theme-toggle";
+import { VideoBackground } from "@/components/video-background";
+import { MusicPlayer } from "@/components/music-player";
+import SoundControls from "@/components/sound-controls";
 
 /**
  * The Home component is the main page layout for the application.
@@ -58,8 +60,16 @@ export default function Home() {
                 </footer>
             </div>
 
-            {/* Background music player */}
+            {/* Background video */}
+            <div className="fixed inset-0 -z-10">
+                <VideoBackground />
+            </div>
+
+            {/* Music player and sound controls */}
             <MusicPlayer />
+            <div className="fixed top-1/2 right-6 -translate-y-1/2 z-50">
+                <SoundControls />
+            </div>
         </div>
     );
 }

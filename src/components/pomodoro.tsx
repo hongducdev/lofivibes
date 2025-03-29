@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
     Popover,
     PopoverContent,
@@ -35,70 +35,119 @@ const Pomodoro = () => {
     const [timerState, setTimerState] = useState<TimerState>("work");
     const [completedPomodoros, setCompletedPomodoros] = useState(0);
     const [config, setConfig] = useState(TIMER_CONFIG);
+    const [initialTime, setInitialTime] = useState(TIMER_CONFIG.work);
+    const isInitialMount = useRef(true);
+    const currentTimeRef = useRef(timeLeft);
+
+    const handleTimerComplete = useCallback(() => {
+        let newTime = 0; // Initialize with a default value
+        
+        if (timerState === "work") {
+            setCompletedPomodoros((prev) => {
+                const newCount = prev + 1;
+                if (newCount === 4) {
+                    setTimerState("longBreak");
+                    newTime = config.longBreak;
+                    return 0;
+                } else {
+                    setTimerState("break");
+                    newTime = config.break;
+                    return newCount;
+                }
+            });
+        } else {
+            setTimerState("work");
+            newTime = config.work;
+        }
+
+        // Only set the new time if it's defined
+        if (typeof newTime === 'number') {
+            setTimeLeft(newTime);
+            currentTimeRef.current = newTime;
+            setInitialTime(newTime);
+        }
+        setIsRunning(false);
+    }, [timerState, config]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
 
         if (isRunning && timeLeft > 0) {
             interval = setInterval(() => {
-                setTimeLeft((prev) => prev - 1);
+                setTimeLeft((prev) => {
+                    currentTimeRef.current = prev - 1;
+                    return prev - 1;
+                });
             }, 1000);
         } else if (timeLeft === 0) {
             handleTimerComplete();
         }
 
         return () => clearInterval(interval);
-    }, [isRunning, timeLeft]);
+    }, [isRunning, timeLeft, handleTimerComplete]);
 
     useEffect(() => {
         const loadSettings = () => {
             const savedSettings = localStorage.getItem("pomodoroSettings");
             if (savedSettings) {
-                const settings = JSON.parse(savedSettings);
-                const newConfig = {
-                    work: settings.work * 60,
-                    break: settings.break * 60,
-                    longBreak: settings.longBreak * 60,
-                };
-                setConfig(newConfig);
-                if (!isRunning) {
-                    setTimeLeft(newConfig[timerState]);
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    const newConfig = {
+                        work: settings.work * 60,
+                        break: settings.break * 60,
+                        longBreak: settings.longBreak * 60,
+                    };
+
+                    if (
+                        isInitialMount.current ||
+                        currentTimeRef.current === config[timerState]
+                    ) {
+                        const newTime = newConfig[timerState];
+                        setTimeLeft(newTime);
+                        currentTimeRef.current = newTime;
+                        setInitialTime(newTime);
+                    }
+
+                    setConfig(newConfig);
+                } catch (error) {
+                    console.error("Error loading pomodoro settings:", error);
                 }
             }
         };
 
-        loadSettings();
+        if (isInitialMount.current) {
+            loadSettings();
+            isInitialMount.current = false;
+        }
+
         window.addEventListener("pomodoroSettingsChanged", loadSettings);
         return () =>
             window.removeEventListener("pomodoroSettingsChanged", loadSettings);
-    }, [isRunning, timerState]);
+    }, [timerState]);
 
-    const handleTimerComplete = () => {
-        if (timerState === "work") {
-            setCompletedPomodoros((prev) => prev + 1);
-            if (completedPomodoros === 3) {
-                setTimerState("longBreak");
-                setTimeLeft(config.longBreak);
-                setCompletedPomodoros(0);
-            } else {
-                setTimerState("break");
-                setTimeLeft(config.break);
-            }
-        } else {
-            setTimerState("work");
-            setTimeLeft(config.work);
-        }
+    const handleReset = useCallback(() => {
+        const newTime = config[timerState];
+        setTimeLeft(newTime);
+        currentTimeRef.current = newTime;
+        setInitialTime(newTime);
         setIsRunning(false);
-    };
+    }, [timerState, config]);
 
-    const handleReset = () => {
-        setTimeLeft(config[timerState]);
-        setIsRunning(false);
-    };
+    const handleStateChange = useCallback(
+        (state: TimerState) => {
+            const newTime = config[state];
+            setTimerState(state);
+            setTimeLeft(newTime);
+            currentTimeRef.current = newTime;
+            setInitialTime(newTime);
+            setIsRunning(false);
+        },
+        [config]
+    );
 
-    const toggleTimer = () => {
-        setIsRunning(!isRunning);
-    };
+    const toggleTimer = useCallback(() => {
+        setIsRunning((prev) => !prev);
+    }, []);
 
     const formatTimeWithAnimation = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -112,7 +161,6 @@ const Pomodoro = () => {
                     <NumberFlow
                         key={`min-${i}`}
                         value={parseInt(digit) as Value}
-                        trend={0}
                         format={{ notation: "compact" }}
                         className="text-zinc-900 dark:text-zinc-100 font-mono"
                     />
@@ -124,7 +172,6 @@ const Pomodoro = () => {
                     <NumberFlow
                         key={`sec-${i}`}
                         value={parseInt(digit) as Value}
-                        trend={0}
                         format={{ notation: "compact" }}
                         className="text-zinc-900 dark:text-zinc-100 font-mono"
                     />
@@ -139,14 +186,14 @@ const Pomodoro = () => {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <PopoverTrigger
-                            className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
+                            className="cursor-pointer w-10 h-10 rounded flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
                             aria-label="Pomodoro timer"
                         >
                             <motion.div
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                             >
-                                <RiTimerLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
+                                <RiTimerLine className="text-zinc-900 dark:text-zinc-100 w-5 h-5" />
                             </motion.div>
                         </PopoverTrigger>
                     </TooltipTrigger>
@@ -193,14 +240,15 @@ const Pomodoro = () => {
                                 strokeWidth="4"
                                 strokeDasharray={283}
                                 strokeDashoffset={
-                                    283 - (timeLeft / config[timerState]) * 283
+                                    283 - (timeLeft / initialTime) * 283
                                 }
                                 className={`${
                                     timerState === "work"
                                         ? "text-red-500"
                                         : "text-green-500"
                                 }`}
-                                transition={{ duration: 0.5, ease: "linear" }}
+                                initial={false}
+                                transition={{ duration: 0 }}
                             />
                         </svg>
                         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -262,11 +310,9 @@ const Pomodoro = () => {
                         {["work", "break", "longBreak"].map((state) => (
                             <motion.button
                                 key={state}
-                                onClick={() => {
-                                    setTimerState(state as TimerState);
-                                    setTimeLeft(config[state as TimerState]);
-                                    setIsRunning(false);
-                                }}
+                                onClick={() =>
+                                    handleStateChange(state as TimerState)
+                                }
                                 className={`px-3 py-1 rounded-full text-xs ${
                                     timerState === state
                                         ? "bg-zinc-200 dark:bg-zinc-700"

@@ -42,14 +42,14 @@ const AboutMe = () => {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <PopoverTrigger
-                            className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
+                            className="cursor-pointer w-10 h-10 rounded flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
                             aria-label="About me"
                         >
                             <motion.div
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                             >
-                                <RiUserLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
+                                <RiUserLine className="text-zinc-900 dark:text-zinc-100 w-5 h-5" />
                             </motion.div>
                         </PopoverTrigger>
                     </TooltipTrigger>
@@ -125,7 +125,7 @@ const AboutMe = () => {
                                 </HoverCardTrigger>
                                 <HoverCardContent className="w-fit p-2 bg-white dark:bg-zinc-900">
                                     <Image
-                                        src="/bmc_qr.png"
+                                        src="/assets/images/bmc_qr.png"
                                         alt="Buy Me a Coffee QR Code"
                                         width={200}
                                         height={200}
