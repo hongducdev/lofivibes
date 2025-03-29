@@ -70,7 +70,7 @@ const SoundControls = () => {
     ];
 
     return (
-        <div className="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 p-2 rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 group">
+        <div className="fixed left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 p-2 rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 group">
             <div className="flex flex-col gap-2">
                 <Button
                     variant="ghost"
@@ -118,7 +118,7 @@ const SoundControls = () => {
                     </TooltipProvider>
                 ))}
             </div>
-            <div className="absolute right-full mr-2 overflow-hidden transition-all duration-300 opacity-0 scale-x-0 origin-right group-hover:opacity-100 group-hover:scale-x-100">
+            <div className="absolute left-full overflow-hidden transition-all duration-300 opacity-0 scale-x-0 origin-left group-hover:opacity-100 group-hover:scale-x-100">
                 <div className="p-2 rounded-lg bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800">
                     <Slider
                         value={[volume]}

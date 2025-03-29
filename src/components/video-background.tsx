@@ -157,7 +157,6 @@ export const VideoBackground = () => {
                     muted
                     playsInline
                     preload="auto"
-                    poster="/assets/videos/poster.jpg"
                     className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
                     onLoadStart={() => {
                         if (nextVideoRef.current) {

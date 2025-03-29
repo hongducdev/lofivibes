@@ -11,6 +11,7 @@ import { VideoBackground } from "@/components/video-background";
 import { MusicPlayer } from "@/components/music-player";
 import SoundControls from "@/components/sound-controls";
 import ShowNoti from "@/components/show-noti";
+import ActiveUsers from "@/components/active-users";
 
 export default function Home() {
     const [showGuide, setShowGuide] = useState(true);
@@ -36,6 +37,9 @@ export default function Home() {
                     <SoundControls />
                 </div>
                 <ShowNoti show={showGuide} setShow={setShowGuide} />
+                <div className="absolute bottom-6 right-6">
+                    <ActiveUsers />
+                </div>
             </div>
         </div>
     );

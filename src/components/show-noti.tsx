@@ -14,14 +14,13 @@ export const ShowNoti = ({ show, setShow }: ShowNotiProps) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setShow(false);
-        }, 10000); // Hide after 10 seconds
+        }, 10000);
 
         return () => clearTimeout(timer);
     }, [setShow]);
 
     const handleShowGuide = () => {
         setShow(true);
-        // Reset timer when manually shown
         const timer = setTimeout(() => {
             setShow(false);
         }, 10000);
