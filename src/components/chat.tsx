@@ -96,7 +96,7 @@ export const Chat = () => {
     };
 
     return (
-        <div className="fixed bottom-4 right-4 w-80 bg-background border rounded-lg shadow-lg">
+        <div>
             <div className="p-4 border-b">
                 <h3 className="font-semibold">Chat Room</h3>
             </div>
