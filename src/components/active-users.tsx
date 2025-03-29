@@ -10,7 +10,7 @@ const ActiveUsers = () => {
     useEffect(() => {
         const channel = pusherClient.subscribe("presence-lofi");
 
-        channel.bind("pusher:subscription_succeeded", (members: any) => {
+        channel.bind("pusher:subscription_succeeded", (members: { count: number }) => {
             setActiveUsers(members.count);
         });
 
