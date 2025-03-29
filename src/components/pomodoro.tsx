@@ -40,7 +40,7 @@ const Pomodoro = () => {
     const currentTimeRef = useRef(timeLeft);
 
     const handleTimerComplete = useCallback(() => {
-        let newTime = 0; // Initialize with a default value
+        let newTime = 0;
         
         if (timerState === "work") {
             setCompletedPomodoros((prev) => {
@@ -60,7 +60,6 @@ const Pomodoro = () => {
             newTime = config.work;
         }
 
-        // Only set the new time if it's defined
         if (typeof newTime === 'number') {
             setTimeLeft(newTime);
             currentTimeRef.current = newTime;
