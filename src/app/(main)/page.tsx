@@ -8,20 +8,11 @@ import { VideoBackground } from "@/components/video-background";
 import { MusicPlayer } from "@/components/music-player";
 import SoundControls from "@/components/sound-controls";
 
-/**
- * The Home component is the main page layout for the application.
- * It displays a time component, main content including an image,
- * an ordered list with instructions, and action links. The footer
- * contains additional informational links. The component also includes
- * settings, a to-do list, and a pomodoro timer as absolute positioned
- * elements on the page.
- */
 export default function Home() {
     return (
         <div className="relative min-h-screen">
-            {/* Main content */}
+            <VideoBackground />
             <div className="relative z-20 flex flex-col min-h-screen p-8">
-                {/* Header */}
                 <div className="flex items-center justify-between">
                     <Time />
                     <div className="flex items-center gap-4">
@@ -32,17 +23,12 @@ export default function Home() {
                         <Settings />
                     </div>
                 </div>
-            </div>
-
-            {/* Background video */}
-            <div className="fixed inset-0 -z-10">
-                <VideoBackground />
-            </div>
-
-            {/* Music player and sound controls */}
-            <MusicPlayer />
-            <div className="fixed top-1/2 right-6 -translate-y-1/2 z-50">
-                <SoundControls />
+                <div className="flex-1 flex items-center justify-center">
+                    <MusicPlayer />
+                </div>
+                <div className="flex justify-center">
+                    <SoundControls />
+                </div>
             </div>
         </div>
     );
