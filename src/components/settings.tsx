@@ -13,6 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import NumberInput from "./number-input";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type PomodoroSettings = {
     work: number;
@@ -54,17 +60,26 @@ const Settings = () => {
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger
-                className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
-                aria-label="Settings"
-            >
-                <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <RiSettingsLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
-                </motion.div>
-            </PopoverTrigger>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <PopoverTrigger
+                            className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
+                            aria-label="Settings"
+                        >
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                            >
+                                <RiSettingsLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
+                            </motion.div>
+                        </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Settings</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
             <PopoverContent className="w-80 p-4 bg-background/80 backdrop-blur-md border-zinc-200 dark:border-zinc-800">
                 <div className="flex flex-col space-y-4">
                     <div className="flex items-center justify-between">

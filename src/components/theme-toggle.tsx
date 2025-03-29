@@ -8,6 +8,12 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Theme = "light" | "dark" | "system";
 
@@ -47,17 +53,26 @@ const ThemeToggle = () => {
 
     return (
         <Popover>
-            <PopoverTrigger
-                className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
-                aria-label="Change theme"
-            >
-                <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <Icon className="w-6 h-6 text-zinc-900 dark:text-zinc-100" />
-                </motion.div>
-            </PopoverTrigger>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <PopoverTrigger
+                            className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
+                            aria-label="Toggle theme"
+                        >
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                            >
+                                <Icon className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
+                            </motion.div>
+                        </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Change Theme</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
             <PopoverContent className="w-48 p-2 bg-background/80 backdrop-blur-md border-zinc-200 dark:border-zinc-800">
                 <div className="flex flex-col gap-1">
                     {themes.map(({ name, value, icon: ThemeIcon }) => (

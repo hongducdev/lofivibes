@@ -11,6 +11,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RiPencilLine } from "react-icons/ri";
 import { Plus, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Todo = {
     id: string;
@@ -99,17 +105,26 @@ const TodoList = () => {
 
     return (
         <Popover>
-            <PopoverTrigger
-                className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
-                aria-label="Open todo list"
-            >
-                <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <RiPencilLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
-                </motion.div>
-            </PopoverTrigger>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <PopoverTrigger
+                            className="cursor-pointer w-14 h-14 rounded-full flex items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-background/80 backdrop-blur-md hover:bg-background/90 transition-colors"
+                            aria-label="Todo list"
+                        >
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                            >
+                                <RiPencilLine className="text-zinc-900 dark:text-zinc-100 w-6 h-6" />
+                            </motion.div>
+                        </PopoverTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Todo List</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
             <PopoverContent className="w-80 p-4 bg-background/80 backdrop-blur-md border-zinc-200 dark:border-zinc-800">
                 <div className="flex flex-col space-y-4">
                     {/* Header */}
