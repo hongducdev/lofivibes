@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useSoundStore } from "@/lib/store";
+import { useTheme } from "next-themes";
 
 export const VideoBackground = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const nextVideoRef = useRef<HTMLVideoElement>(null);
     const [currentTime, setCurrentTime] = useState(new Date());
     const [currentVideo, setCurrentVideo] = useState("");
+    const { theme, systemTheme } = useTheme();
     const {
         isRaining,
         isCityTraffic,
@@ -23,27 +25,38 @@ export const VideoBackground = () => {
     const wavesRef = useRef<HTMLAudioElement>(null);
     const windRef = useRef<HTMLAudioElement>(null);
 
-    const getVideoPath = (hour: number, isRaining: boolean) => {
-        const isNight = hour >= 18 || hour < 6;
-        return isNight
-            ? isRaining
-                ? "/assets/videos/ExteriorRainyNight.mp4"
-                : "/assets/videos/ExteriorNight.mp4"
-            : isRaining
-            ? "/assets/videos/ExteriorRainyDay.mp4"
-            : "/assets/videos/ExteriorDay.mp4";
-    };
+    const getVideoPath = useCallback(
+        (hour: number, isRaining: boolean, isDark: boolean) => {
+            const isNight = isDark || hour >= 18 || hour < 6;
+            return isNight
+                ? isRaining
+                    ? "/assets/videos/ExteriorRainyNight.mp4"
+                    : "/assets/videos/ExteriorNight.mp4"
+                : isRaining
+                ? "/assets/videos/ExteriorRainyDay.mp4"
+                : "/assets/videos/ExteriorDay.mp4";
+        },
+        []
+    );
 
-    const updateVideo = () => {
+    const updateVideo = useCallback(() => {
         const hour = currentTime.getHours();
-        const videoPath = getVideoPath(hour, isRaining);
+        const currentTheme = theme === "system" ? systemTheme : theme;
+        const isDark = currentTheme === "dark";
+        const videoPath = getVideoPath(hour, isRaining, isDark);
 
         if (currentVideo !== videoPath) {
             setCurrentVideo(videoPath);
         }
-    };
+    }, [
+        currentTime,
+        theme,
+        systemTheme,
+        isRaining,
+        getVideoPath,
+        currentVideo,
+    ]);
 
-    // Update current time every second
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date());
@@ -52,32 +65,26 @@ export const VideoBackground = () => {
         return () => clearInterval(timer);
     }, []);
 
-    // Update video path when time or rain state changes
     useEffect(() => {
         updateVideo();
-    }, [currentTime, isRaining]);
+    }, [currentTime, isRaining, theme, systemTheme, updateVideo]);
 
-    // Handle video source changes
     useEffect(() => {
         if (!videoRef.current || !nextVideoRef.current || !currentVideo) return;
 
         const currentVideoEl = videoRef.current;
         const nextVideoEl = nextVideoRef.current;
 
-        // Prepare next video
         nextVideoEl.src = currentVideo;
         nextVideoEl.load();
 
         const handleNextVideoReady = () => {
-            // Start playing next video
             nextVideoEl
                 .play()
                 .then(() => {
-                    // Once next video is playing, fade it in
                     nextVideoEl.classList.remove("opacity-0");
                     currentVideoEl.classList.add("opacity-0");
 
-                    // After transition, update current video
                     setTimeout(() => {
                         currentVideoEl.src = currentVideo;
                         currentVideoEl.load();
@@ -99,7 +106,6 @@ export const VideoBackground = () => {
         };
     }, [currentVideo]);
 
-    // Handle audio
     useEffect(() => {
         const audioRefs = [
             { ref: rainAudioRef, isPlaying: isRaining },
@@ -113,9 +119,7 @@ export const VideoBackground = () => {
             if (ref.current) {
                 ref.current.volume = volume * 0.5;
                 if (isPlaying && ref.current.paused) {
-                    ref.current.play().catch(() => {
-                        // Ignore play errors - they can happen when the user hasn't interacted with the page yet
-                    });
+                    ref.current.play().catch(() => {});
                 } else if (!isPlaying && !ref.current.paused) {
                     ref.current.pause();
                     ref.current.currentTime = 0;
