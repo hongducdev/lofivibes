@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Send, Loader2 } from "lucide-react";
 
 interface Message {
     id: string;
@@ -136,8 +136,20 @@ export const Chat = () => {
                         className="flex-1"
                         disabled={isLoading}
                     />
-                    <Button type="submit" size="sm" disabled={isLoading}>
-                        Send
+                    <Button
+                        type="submit"
+                        size="sm"
+                        disabled={isLoading}
+                        className="px-2"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Send className="h-4 w-4" />
+                        )}
+                        <span className="sr-only">
+                            {isLoading ? "Sending message" : "Send message"}
+                        </span>
                     </Button>
                 </div>
             </form>
