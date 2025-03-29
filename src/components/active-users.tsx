@@ -1,27 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
 import { Users } from "lucide-react";
+import { pusherClient } from "@/lib/pusher";
 
 const ActiveUsers = () => {
     const [activeUsers, setActiveUsers] = useState<number>(0);
 
     useEffect(() => {
-        const socket = io(
-            process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:3000"
-        );
+        const channel = pusherClient.subscribe("presence-lofi");
 
-        socket.on("connect", () => {
-            console.log("Connected to WebSocket server");
+        channel.bind("pusher:subscription_succeeded", (members: any) => {
+            setActiveUsers(members.count);
         });
 
-        socket.on("activeUsers", (count: number) => {
-            setActiveUsers(count);
+        channel.bind("pusher:member_added", () => {
+            setActiveUsers((count) => count + 1);
+        });
+
+        channel.bind("pusher:member_removed", () => {
+            setActiveUsers((count) => Math.max(0, count - 1));
         });
 
         return () => {
-            socket.disconnect();
+            channel.unbind_all();
+            pusherClient.unsubscribe("presence-lofi");
         };
     }, []);
 
