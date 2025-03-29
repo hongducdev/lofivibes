@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
+import { MessageCircle } from "lucide-react";
 
 interface Message {
     id: string;
@@ -18,6 +19,14 @@ const MessageSkeleton = () => (
     <div className="mb-4 space-y-2">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-10 w-[80%]" />
+    </div>
+);
+
+const EmptyState = () => (
+    <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+        <MessageCircle className="h-12 w-12 mb-2" />
+        <p>No messages yet</p>
+        <p className="text-sm">Be the first to start the conversation!</p>
     </div>
 );
 
@@ -98,6 +107,8 @@ export const Chat = () => {
                         <MessageSkeleton />
                         <MessageSkeleton />
                     </>
+                ) : messages.length === 0 ? (
+                    <EmptyState />
                 ) : (
                     messages.map((msg) => (
                         <div

@@ -219,6 +219,7 @@ const TodoList = () => {
                                                         ? "incomplete"
                                                         : "complete"
                                                 }`}
+                                                className="border-zinc-300 dark:border-zinc-700 data-[state=checked]:bg-zinc-900 data-[state=checked]:dark:bg-zinc-50 data-[state=checked]:text-zinc-50 data-[state=checked]:dark:text-zinc-900"
                                             />
                                             <motion.span
                                                 layout
@@ -234,11 +235,15 @@ const TodoList = () => {
                                                 }
                                                 tabIndex={0}
                                                 role="button"
-                                                aria-label={`Toggle "${todo.text}" completion`}
+                                                aria-label={`${
+                                                    todo.completed
+                                                        ? "Mark incomplete"
+                                                        : "Mark complete"
+                                                }: ${todo.text}`}
                                                 animate={{
                                                     color: todo.completed
-                                                        ? "#71717a"
-                                                        : "#18181b",
+                                                        ? "hsl(var(--muted-foreground))"
+                                                        : "hsl(var(--foreground))",
                                                     opacity: todo.completed
                                                         ? 0.5
                                                         : 1,
@@ -247,7 +252,7 @@ const TodoList = () => {
                                                             ? "line-through"
                                                             : "none",
                                                 }}
-                                                className="flex-1 text-sm cursor-pointer select-none truncate"
+                                                className="flex-1 text-sm cursor-pointer select-none truncate hover:text-foreground/80 transition-colors"
                                             >
                                                 {todo.text}
                                             </motion.span>
