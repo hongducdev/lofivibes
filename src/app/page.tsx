@@ -22,7 +22,7 @@ export default function Home() {
             {/* Main content */}
             <div className="relative z-20 flex flex-col min-h-screen p-8">
                 {/* Header */}
-                <header className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                     <Time />
                     <div className="flex items-center gap-4">
                         <AboutMe />
@@ -31,33 +31,7 @@ export default function Home() {
                         <ThemeToggle />
                         <Settings />
                     </div>
-                </header>
-
-                {/* Center content */}
-                <main className="flex-1 flex items-center justify-center">
-                    <div className="text-center space-y-4">
-                        <h1 className="text-4xl font-bold tracking-tight">
-                            LofiVibes
-                        </h1>
-                        <p className="text-lg text-muted-foreground max-w-lg">
-                            Immerse yourself in soothing lofi beats. Perfect for
-                            studying, working, or just unwinding.
-                        </p>
-                    </div>
-                </main>
-
-                {/* Footer */}
-                <footer className="py-4 text-center text-sm text-muted-foreground">
-                    Made with ♥️ by{" "}
-                    <a
-                        href="https://hongduc.dev"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline underline-offset-4 hover:text-foreground transition-colors"
-                    >
-                        Hong Duc Dev
-                    </a>
-                </footer>
+                </div>
             </div>
 
             {/* Background video */}

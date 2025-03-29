@@ -11,12 +11,24 @@ A beautiful and minimalist Lofi music player with Pomodoro timer built with Next
     -   Play/pause, skip, and volume control
     -   Beautiful visualizations
     -   Dark/light mode support
+    -   Customizable sound effects
 
--   ⏰ Pomodoro Timer
+-   ⏰ Enhanced Pomodoro Timer
 
     -   Customizable work/break intervals
-    -   Visual and audio notifications
-    -   Session tracking
+    -   Long break after 4 pomodoro sessions
+    -   Visual progress indicator
+    -   Audio notifications
+    -   Session tracking and statistics
+    -   Persistent settings
+    -   Automatic state transitions
+
+-   📝 Todo List
+
+    -   Add and manage tasks
+    -   Mark tasks as complete
+    -   Persistent storage
+    -   Beautiful animations
 
 -   🎨 Modern UI
 
@@ -24,6 +36,14 @@ A beautiful and minimalist Lofi music player with Pomodoro timer built with Next
     -   Smooth animations with Framer Motion
     -   Fully responsive layout
     -   Dark mode support
+    -   Accessibility features
+
+-   ⚡ Performance
+
+    -   Fast page loads
+    -   Optimized assets
+    -   Progressive Web App (PWA) support
+    -   Offline functionality
 
 -   👤 About Section
     -   Author information

@@ -255,12 +255,12 @@ const TodoList = () => {
                                         <motion.div
                                             whileHover={{ scale: 1.1 }}
                                             whileTap={{ scale: 0.9 }}
-                                            className="invisible group-hover:visible absolute right-0 bg-zinc-50 dark:bg-zinc-800"
+                                            className="invisible group-hover:visible absolute right-0"
                                         >
                                             <Button
                                                 size="icon"
                                                 variant="ghost"
-                                                className="h-8 w-8"
+                                                className="h-8 w-8 hover:bg-transparent"
                                                 onClick={() =>
                                                     handleDeleteTodo(todo.id)
                                                 }
