@@ -9,7 +9,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Chat } from "./chat";
-import { cn } from "@/lib/utils";
 
 const ActiveUsers = () => {
     const [activeUsers, setActiveUsers] = useState<number>(0);
