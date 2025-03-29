@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import { NextResponse } from "next/server";
 
 declare global {
+    // eslint-disable-next-line no-var
     var io: Server | undefined;
 }
 
