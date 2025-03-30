@@ -1,108 +1,58 @@
 # 🌿 LofiVibes
 
-Immerse yourself in soothing lofi beats. LofiVibes offers high-quality lofi music for studying, working, and unwinding. Tune in and relax.
+Immerse yourself in soothing lofi beats and ambient sounds. LofiVibes offers a beautiful, minimal environment for studying, working, and relaxation. Built with Next.js 15, TypeScript, and modern web technologies.
 
-A beautiful and minimalist Lofi music player with Pomodoro timer built with Next.js 15, TypeScript, and modern web technologies.
+![LofiVibes Preview](public/assets/images/preview.png)
 
-## Features
+## ✨ Features
 
--   🎵 Lofi Music Player
+### 🎵 Immersive Environment
 
-    -   Play/pause, skip, and volume control
-    -   Beautiful visualizations
-    -   Dark/light mode support
-    -   Customizable sound effects
+-   Multiple beautiful scenes (Book Cafe, Cozy Studio, and more)
+-   Dynamic day/night transitions
+-   Customizable ambient sounds:
+    -   Rain
+    -   City Traffic
+    -   People Talking
+    -   Ocean Waves
+    -   Wind
+    -   Keyboard Typing
+-   Volume control for each sound effect
+-   Scene preview and easy switching
 
--   💬 Real-time Chat
+### 🎧 Music Player
 
-    -   Connect with other listeners
-    -   Real-time message updates with Pusher
-    -   Message timestamps with date preview
-    -   Beautiful message animations
-    -   Dark mode support
+-   Curated lofi music selection
+-   Play/pause and skip controls
+-   Volume control
+-   Beautiful audio visualizations
+-   Progress bar with time display
 
--   ⏰ Enhanced Pomodoro Timer
+### ⚡ Enhanced Experience
 
-    -   Customizable work/break intervals
-    -   Long break after 4 pomodoro sessions
-    -   Visual progress indicator
-    -   Audio notifications
-    -   Session tracking and statistics
-    -   Persistent settings
-    -   Automatic state transitions
+-   🌓 Dark/light mode support
+-   ⏰ Pomodoro timer with customizable intervals
+-   � Real-time chat with other listeners
+-   🔄 State persistence across sessions
+-   📱 Responsive design for all devices
 
--   📝 Todo List
+### 🛠️ Technical Features
 
-    -   Add and manage tasks
-    -   Mark tasks as complete
-    -   Persistent storage
-    -   Beautiful animations
+-   Built with Next.js 14 App Router
+-   TypeScript for type safety
+-   TailwindCSS for styling
+-   Shadcn/UI components
+-   Zustand for state management
+-   Pusher for real-time features
+-   Prisma with PostgreSQL
+-   NextAuth.js for authentication
 
--   🎨 Modern UI
-
-    -   Clean and minimalist design
-    -   Smooth animations with Framer Motion
-    -   Fully responsive layout
-    -   Dark mode support
-    -   Accessibility features
-
--   ⚡ Performance
-
-    -   Fast page loads
-    -   Optimized assets
-    -   Progressive Web App (PWA) support
-    -   Offline functionality
-
--   👤 About Section
-    -   Author information
-    -   Social media links
-    -   Support via Buy Me a Coffee (with QR code)
-
-## Keyboard Shortcuts
-
--   **Music Controls**
-
-    -   `Space` - Play/pause
-    -   `↑` - Increase volume
-    -   `↓` - Decrease volume
-    -   `←` - Previous channel
-    -   `→` - Next channel
-
-## Tech Stack
-
-### Core
-
--   [Next.js 15](https://nextjs.org/) - React framework with Turbopack
--   [React 19](https://react.dev/) - JavaScript library for building user interfaces
--   [TypeScript](https://www.typescriptlang.org/) - Type safety
-
-### Styling & UI
-
--   [Tailwind CSS](https://tailwindcss.com/) - Styling
--   [Shadcn/ui](https://ui.shadcn.com/) - UI components (Radix UI)
--   [Framer Motion](https://www.framer.com/motion/) - Animations
--   [Lucide React](https://lucide.dev/) - Icons
--   [React Icons](https://react-icons.github.io/react-icons/) - Additional icons
-
-### State Management & Forms
-
--   [Zustand](https://zustand-demo.pmnd.rs/) - State management
--   [React Hook Form](https://react-hook-form.com/) - Form handling
--   [Zod](https://zod.dev/) - Schema validation
-
-### Developer Experience
-
--   [ESLint](https://eslint.org/) - Code linting
--   [TypeScript](https://www.typescriptlang.org/) - Static typing
--   [Next.js](https://nextjs.org/) - Development environment
-
-## Getting Started
+## 🚀 Getting Started
 
 1. Clone the repository:
 
 ```bash
-git clone git@github.com:hongducdev/lofivibes.git
-cd lofivibes
+git clone https://github.com/hongducdev/lofivibes.git
 ```
 
 2. Install dependencies:
@@ -111,43 +61,24 @@ cd lofivibes
 pnpm install
 ```
 
-3. Run the development server:
+3. Set up environment variables:
+
+```bash
+cp .env.example .env
+```
+
+4. Start the development server:
 
 ```bash
 pnpm dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+## 📝 License
 
-## Environment Variables
+[MIT License](LICENSE)
 
-Create a `.env.local` file in the root directory with the following variables:
+## 🙏 Credits
 
-```env
-# Add any required environment variables here
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-If you like this project, please consider:
-
--   ⭐ Starring the repository
--   🐛 Reporting bugs
--   🤝 Contributing to the code
--   ☕ [Buying me a coffee](https://buymeacoffee.com/hongducdev)
-
-## Author
-
--   Hong Duc ([@hongducdev](https://github.com/hongducdev))
--   Email: hey@hongduc.dev
--   Website: [https://lofavibes.com](https://lofavibes.com)
-
----
+-   Music provided by [Lofi Girl](https://lofigirl.com/)
+-   Icons by [Lucide](https://lucide.dev/)
+-   UI Components by [shadcn/ui](https://ui.shadcn.com/)
