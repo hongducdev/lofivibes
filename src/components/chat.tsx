@@ -62,6 +62,7 @@ export const Chat = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [isSending, setIsSending] = useState(false);
     const [username] = useState(
         `User_${Math.random().toString(36).slice(2, 7)}`
     );
@@ -102,7 +103,7 @@ export const Chat = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim()) return;
+        if (!newMessage.trim() || isSending) return;
 
         const message = {
             id: `${Date.now()}_${Math.random().toString(36).slice(2)}`,
@@ -112,6 +113,7 @@ export const Chat = () => {
         };
 
         try {
+            setIsSending(true);
             await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -120,6 +122,8 @@ export const Chat = () => {
             setNewMessage("");
         } catch (error) {
             console.error("Failed to send message:", error);
+        } finally {
+            setIsSending(false);
         }
     };
 
@@ -180,21 +184,21 @@ export const Chat = () => {
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type a message..."
                         className="flex-1"
-                        disabled={isLoading}
+                        disabled={isLoading || isSending}
                     />
                     <Button
                         type="submit"
                         size="sm"
-                        disabled={isLoading}
+                        disabled={isLoading || isSending || !newMessage.trim()}
                         className="px-2"
                     >
-                        {isLoading ? (
+                        {isSending ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                             <Send className="h-4 w-4" />
                         )}
                         <span className="sr-only">
-                            {isLoading ? "Sending message" : "Send message"}
+                            {isSending ? "Sending message" : "Send message"}
                         </span>
                     </Button>
                 </div>

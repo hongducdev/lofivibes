@@ -9,6 +9,44 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Chat } from "./chat";
+import { motion, AnimatePresence } from "framer-motion";
+
+const NotificationBadge = ({ count }: { count: number }) => (
+    <div className="absolute -top-1 -right-1">
+        <span className="relative flex h-4 w-4">
+            <motion.span
+                className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+                animate={{
+                    scale: [1, 1.5],
+                    opacity: [0.75, 0],
+                }}
+                transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    repeatDelay: 0.5,
+                }}
+            />
+            <motion.span
+                className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+                animate={{
+                    scale: [1, 1.5],
+                    opacity: [0.75, 0],
+                }}
+                transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    repeatDelay: 0.5,
+                    delay: 0.3,
+                }}
+            />
+            <span className="relative inline-flex rounded-full h-4 w-4 bg-primary items-center justify-center">
+                <span className="text-[10px] font-medium text-primary-foreground">
+                    {count > 99 ? "99+" : count}
+                </span>
+            </span>
+        </span>
+    </div>
+);
 
 const ActiveUsers = () => {
     const [activeUsers, setActiveUsers] = useState<number>(0);
@@ -58,14 +96,14 @@ const ActiveUsers = () => {
     return (
         <Popover open={isOpen} onOpenChange={handleOpenChange}>
             <PopoverTrigger asChild>
-                <button className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-400 dark:text-zinc-500 bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-lg transition-all duration-300 hover:bg-background/90 relative">
-                    <Users className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
+                <button className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-800 dark:text-zinc-500 bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-lg transition-all duration-300 hover:bg-background/90 relative">
+                    <Users className="h-4 w-4 text-zinc-800 dark:text-zinc-500" />
                     <span className="font-medium">{activeUsers} online</span>
-                    {unreadCount > 0 && (
-                        <span className="absolute -top-2 -right-2 min-w-5 h-5 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs px-1">
-                            {unreadCount}
-                        </span>
-                    )}
+                    <AnimatePresence>
+                        {unreadCount > 0 && (
+                            <NotificationBadge count={unreadCount} />
+                        )}
+                    </AnimatePresence>
                 </button>
             </PopoverTrigger>
             <PopoverContent side="right" className="w-80 p-0 mb-6">
