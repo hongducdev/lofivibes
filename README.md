@@ -13,6 +13,14 @@ A beautiful and minimalist Lofi music player with Pomodoro timer built with Next
     -   Dark/light mode support
     -   Customizable sound effects
 
+-   💬 Real-time Chat
+
+    -   Connect with other listeners
+    -   Real-time message updates with Pusher
+    -   Message timestamps with date preview
+    -   Beautiful message animations
+    -   Dark mode support
+
 -   ⏰ Enhanced Pomodoro Timer
 
     -   Customizable work/break intervals
@@ -49,6 +57,20 @@ A beautiful and minimalist Lofi music player with Pomodoro timer built with Next
     -   Author information
     -   Social media links
     -   Support via Buy Me a Coffee (with QR code)
+
+## Keyboard Shortcuts
+
+-   **Music Controls**
+
+    -   `Space` - Play/pause
+    -   `↑` - Increase volume
+    -   `↓` - Decrease volume
+    -   `←` - Previous channel
+    -   `→` - Next channel
+
+-   **Chat Controls**
+    -   `Ctrl + Enter` - Send message
+    -   `Esc` - Clear message input
 
 ## Tech Stack
 

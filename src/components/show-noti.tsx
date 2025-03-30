@@ -35,7 +35,7 @@ export const ShowNoti = ({ show, setShow }: ShowNotiProps) => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="fixed bottom-24 left-6 bg-white/80 dark:bg-zinc-900/90 backdrop-blur-md p-4 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800 max-w-[300px] z-[100]"
+                        className="fixed bottom-6 left-6 bg-white/80 dark:bg-zinc-900/90 backdrop-blur-md p-4 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800 max-w-[300px] z-[100]"
                     >
                         <div className="relative">
                             <p className="text-zinc-900 dark:text-white/80 text-sm leading-relaxed">
