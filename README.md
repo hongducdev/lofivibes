@@ -68,10 +68,6 @@ A beautiful and minimalist Lofi music player with Pomodoro timer built with Next
     -   `←` - Previous channel
     -   `→` - Next channel
 
--   **Chat Controls**
-    -   `Ctrl + Enter` - Send message
-    -   `Esc` - Clear message input
-
 ## Tech Stack
 
 ### Core

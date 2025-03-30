@@ -3,8 +3,13 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSoundStore } from "@/lib/store";
 import { useTheme } from "next-themes";
+import { type BackgroundVideo } from "@/config/background-config";
 
-export const VideoBackground = () => {
+interface VideoBackgroundProps {
+    currentBackground: BackgroundVideo;
+}
+
+export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const nextVideoRef = useRef<HTMLVideoElement>(null);
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -28,15 +33,33 @@ export const VideoBackground = () => {
     const getVideoPath = useCallback(
         (hour: number, isRaining: boolean, isDark: boolean) => {
             const isNight = isDark || hour >= 18 || hour < 6;
-            return isNight
+            const videoType = isNight
                 ? isRaining
-                    ? "/assets/videos/ExteriorRainyNight.mp4"
-                    : "/assets/videos/ExteriorNight.mp4"
+                    ? "night-rain"
+                    : "night"
                 : isRaining
-                ? "/assets/videos/ExteriorRainyDay.mp4"
-                : "/assets/videos/ExteriorDay.mp4";
+                ? "day-rain"
+                : "day";
+
+            // Handle cases where rain videos don't exist
+            if (
+                isRaining &&
+                !currentBackground.videos[
+                    `${isNight ? "night" : "day"}-rain` as const
+                ]
+            ) {
+                return `${currentBackground.url}/${
+                    currentBackground.videos[isNight ? "night" : "day"]
+                }`;
+            }
+
+            return `${currentBackground.url}/${
+                currentBackground.videos[
+                    videoType as keyof typeof currentBackground.videos
+                ]
+            }`;
         },
-        []
+        [currentBackground]
     );
 
     const updateVideo = useCallback(() => {
