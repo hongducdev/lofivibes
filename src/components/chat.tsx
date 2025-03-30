@@ -6,13 +6,20 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
-import { MessageCircle, Send, Loader2 } from "lucide-react";
+import { MessageCircle, Send, Loader2, Edit2 } from "lucide-react";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "./ui/tooltip";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog";
 
 interface Message {
     id: string;
@@ -63,10 +70,20 @@ export const Chat = () => {
     const [newMessage, setNewMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [isSending, setIsSending] = useState(false);
-    const [username] = useState(
-        `User_${Math.random().toString(36).slice(2, 7)}`
-    );
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [newUsername, setNewUsername] = useState("");
+    const [username, setUsername] = useState<string>(() => {
+        if (typeof window !== "undefined") {
+            const savedUsername = localStorage.getItem("chatUsername");
+            return (
+                savedUsername ||
+                `User_${Math.random().toString(36).slice(2, 7)}`
+            );
+        }
+        return `User_${Math.random().toString(36).slice(2, 7)}`;
+    });
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const usernameInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -101,6 +118,18 @@ export const Chat = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            localStorage.setItem("chatUsername", username);
+        }
+    }, [username]);
+
+    useEffect(() => {
+        if (isEditingName && usernameInputRef.current) {
+            usernameInputRef.current.focus();
+        }
+    }, [isEditingName]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newMessage.trim() || isSending) return;
@@ -127,10 +156,103 @@ export const Chat = () => {
         }
     };
 
+    const handleUsernameChange = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newUsername.trim()) return;
+
+        setUsername(newUsername.trim());
+        setNewUsername("");
+        setIsEditingName(false);
+    };
+
+    const handleUsernameKeyDown = (
+        e: React.KeyboardEvent<HTMLInputElement>
+    ) => {
+        if (e.key === "Escape") {
+            setIsEditingName(false);
+            setNewUsername("");
+        }
+    };
+
     return (
         <div>
-            <div className="p-4 border-b">
-                <h3 className="font-semibold">Chat Room</h3>
+            <div className="p-4 border-b flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">Chat Room</h3>
+                    <Dialog
+                        open={isEditingName}
+                        onOpenChange={setIsEditingName}
+                    >
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2 hover:bg-muted"
+                                aria-label="Edit username"
+                            >
+                                <Edit2 className="h-4 w-4" />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Change Username</DialogTitle>
+                            </DialogHeader>
+                            <form
+                                onSubmit={handleUsernameChange}
+                                className="space-y-4 mt-2"
+                            >
+                                <div className="space-y-2">
+                                    <Input
+                                        ref={usernameInputRef}
+                                        value={newUsername}
+                                        onChange={(e) =>
+                                            setNewUsername(e.target.value)
+                                        }
+                                        onKeyDown={handleUsernameKeyDown}
+                                        placeholder="Enter new username"
+                                        className="flex-1"
+                                        aria-label="New username"
+                                        maxLength={30}
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Current username: {username}
+                                    </p>
+                                </div>
+                                <div className="flex justify-end gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setIsEditingName(false)}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        disabled={!newUsername.trim()}
+                                    >
+                                        Save Changes
+                                    </Button>
+                                </div>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <button
+                                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                onClick={() => setIsEditingName(true)}
+                                aria-label="Show username"
+                            >
+                                {username}
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Click to change your username</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
             <div className="h-96 overflow-y-auto p-4">
                 {isLoading ? (
