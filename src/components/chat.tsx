@@ -7,6 +7,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
 import { MessageCircle, Send, Loader2 } from "lucide-react";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "./ui/tooltip";
 
 interface Message {
     id: string;
@@ -29,6 +35,28 @@ const EmptyState = () => (
         <p className="text-sm">Be the first to start the conversation!</p>
     </div>
 );
+
+const formatTimestamp = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
+};
+
+const formatFullDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
+};
 
 export const Chat = () => {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -120,7 +148,25 @@ export const Chat = () => {
                                     : "bg-muted"
                             )}
                         >
-                            <p className="text-sm font-medium">{msg.sender}</p>
+                            <div className="flex items-center gap-2 mb-1">
+                                <p className="text-sm font-semibold">
+                                    {msg.sender}
+                                </p>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <span className="text-xs opacity-70">
+                                                {formatTimestamp(msg.timestamp)}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>
+                                                {formatFullDate(msg.timestamp)}
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
                             <p>{msg.text}</p>
                         </div>
                     ))
