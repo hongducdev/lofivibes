@@ -8,6 +8,7 @@ import {
     RiGroupLine,
     RiWaterFlashLine,
     RiWindyLine,
+    RiKeyboardLine,
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -27,12 +28,14 @@ const SoundControls = () => {
         isPeopleTalking,
         isWaves,
         isWind,
+        isKeyboard,
         volume,
         toggleRain,
         toggleCityTraffic,
         togglePeopleTalking,
         toggleWaves,
         toggleWind,
+        toggleKeyboard,
         setVolume,
     } = useSoundStore();
 
@@ -66,6 +69,12 @@ const SoundControls = () => {
             isActive: isWind,
             toggle: toggleWind,
             icon: <RiWindyLine className="w-5 h-5" />,
+        },
+        {
+            name: "Keyboard",
+            isActive: isKeyboard,
+            toggle: toggleKeyboard,
+            icon: <RiKeyboardLine className="w-5 h-5" />,
         },
     ];
 

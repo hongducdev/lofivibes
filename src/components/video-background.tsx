@@ -9,7 +9,9 @@ interface VideoBackgroundProps {
     currentBackground: BackgroundVideo;
 }
 
-export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => {
+export const VideoBackground = ({
+    currentBackground,
+}: VideoBackgroundProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const nextVideoRef = useRef<HTMLVideoElement>(null);
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -21,6 +23,7 @@ export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => 
         isPeopleTalking,
         isWaves,
         isWind,
+        isKeyboard,
         volume,
     } = useSoundStore();
 
@@ -29,6 +32,7 @@ export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => 
     const peopleTalkRef = useRef<HTMLAudioElement>(null);
     const wavesRef = useRef<HTMLAudioElement>(null);
     const windRef = useRef<HTMLAudioElement>(null);
+    const keyboardRef = useRef<HTMLAudioElement>(null);
 
     const getVideoPath = useCallback(
         (hour: number, isRaining: boolean, isDark: boolean) => {
@@ -41,7 +45,6 @@ export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => 
                 ? "day-rain"
                 : "day";
 
-            // Handle cases where rain videos don't exist
             if (
                 isRaining &&
                 !currentBackground.videos[
@@ -136,6 +139,7 @@ export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => 
             { ref: peopleTalkRef, isPlaying: isPeopleTalking },
             { ref: wavesRef, isPlaying: isWaves },
             { ref: windRef, isPlaying: isWind },
+            { ref: keyboardRef, isPlaying: isKeyboard },
         ];
 
         audioRefs.forEach(({ ref, isPlaying }) => {
@@ -149,7 +153,15 @@ export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => 
                 }
             }
         });
-    }, [isRaining, isCityTraffic, isPeopleTalking, isWaves, isWind, volume]);
+    }, [
+        isRaining,
+        isCityTraffic,
+        isPeopleTalking,
+        isWaves,
+        isWind,
+        isKeyboard,
+        volume,
+    ]);
 
     return (
         <>
@@ -206,6 +218,7 @@ export const VideoBackground = ({ currentBackground }: VideoBackgroundProps) => 
             />
             <audio ref={wavesRef} loop src="/assets/sounds/waves.mp3" />
             <audio ref={windRef} loop src="/assets/sounds/wind.mp3" />
+            <audio ref={keyboardRef} loop src="/assets/sounds/keyboard.mp3" />
         </>
     );
 };
