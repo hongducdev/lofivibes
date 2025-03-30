@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Skeleton } from "./ui/skeleton";
-import { MessageCircle, Send, Loader2, Edit2 } from "lucide-react";
+import { MessageCircle, Send, Loader2, Edit2, Smile } from "lucide-react";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import {
     Tooltip,
     TooltipContent,
@@ -20,6 +21,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "./ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 interface Message {
     id: string;
@@ -72,6 +74,7 @@ export const Chat = () => {
     const [isSending, setIsSending] = useState(false);
     const [isEditingName, setIsEditingName] = useState(false);
     const [newUsername, setNewUsername] = useState("");
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [username, setUsername] = useState<string>(() => {
         if (typeof window !== "undefined") {
             const savedUsername = localStorage.getItem("chatUsername");
@@ -84,6 +87,7 @@ export const Chat = () => {
     });
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const usernameInputRef = useRef<HTMLInputElement>(null);
+    const messageInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         setIsLoading(true);
@@ -172,6 +176,19 @@ export const Chat = () => {
             setIsEditingName(false);
             setNewUsername("");
         }
+    };
+
+    const handleEmojiClick = (emojiData: EmojiClickData) => {
+        const cursor =
+            messageInputRef.current?.selectionStart || newMessage.length;
+        const newMessageWithEmoji =
+            newMessage.slice(0, cursor) +
+            emojiData.emoji +
+            newMessage.slice(cursor);
+
+        setNewMessage(newMessageWithEmoji);
+        setShowEmojiPicker(false);
+        messageInputRef.current?.focus();
     };
 
     return (
@@ -301,13 +318,43 @@ export const Chat = () => {
             </div>
             <form onSubmit={handleSubmit} className="p-4 border-t">
                 <div className="flex gap-2">
-                    <Input
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                        className="flex-1"
-                        disabled={isLoading || isSending}
-                    />
+                    <div className="relative flex-1 flex gap-2">
+                        <Popover
+                            open={showEmojiPicker}
+                            onOpenChange={setShowEmojiPicker}
+                        >
+                            <PopoverTrigger asChild>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-10 w-10 hover:bg-muted"
+                                    aria-label="Add emoji"
+                                >
+                                    <Smile className="h-5 w-5" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                side="top"
+                                align="start"
+                                className="w-full p-0 mb-2"
+                            >
+                                <EmojiPicker
+                                    onEmojiClick={handleEmojiClick}
+                                    width="100%"
+                                    height={400}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                        <Input
+                            ref={messageInputRef}
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            placeholder="Type a message..."
+                            className="flex-1"
+                            disabled={isLoading || isSending}
+                        />
+                    </div>
                     <Button
                         type="submit"
                         size="sm"
