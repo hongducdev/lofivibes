@@ -13,6 +13,9 @@ import SoundControls from "@/components/sound-controls";
 import ShowNoti from "@/components/show-noti";
 import ActiveUsers from "@/components/active-users";
 import ChangeBackground from "@/components/change-background";
+import NetworkStatus from "@/components/network-status";
+import OrientationOverlay from "@/components/orientation-overlay";
+import { Toaster } from "sonner";
 import {
     type BackgroundVideo,
     backgroundConfig,
@@ -30,8 +33,8 @@ export default function Home() {
             try {
                 const parsed = JSON.parse(saved);
                 setCurrentBackground(parsed);
-            } catch (e) {
-                console.error("Failed to parse saved background:", e);
+            } catch (error) {
+                console.error("Error parsing saved background:", error);
             }
         }
     }, []);
@@ -42,38 +45,43 @@ export default function Home() {
     };
 
     return (
-        <div className="relative min-h-screen">
+        <main className="relative h-screen w-screen overflow-hidden">
+            <Toaster />
+            <NetworkStatus />
+            <OrientationOverlay />
             <VideoBackground currentBackground={currentBackground} />
-            <div className="relative z-20 flex flex-col min-h-screen p-8">
+            <div className="relative z-20 flex flex-col min-h-screen p-2 lg:p-6">
                 <div className="flex justify-between items-start">
-                    <div className="flex flex-row-reverse gap-4">
-                        <AboutMe />
-                        <TodoList />
-                        <Pomodoro />
-                        <ThemeToggle />
-                        <Settings />
-                    </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col gap-4">
                         <Time />
                     </div>
+                    <div className="flex flex-col items-end gap-2 lg:gap-4">
+                        <div className="flex items-center gap-4 flex-wrap justify-end">
+                            <AboutMe />
+                            <ThemeToggle />
+                            <TodoList />
+                            <Pomodoro />
+                            <Settings />
+                        </div>
+                    </div>
                 </div>
-                <div className="flex-1 flex items-center justify-center">
-                    <MusicPlayer />
-                </div>
-                <div className="flex justify-center">
+                <div>
                     <SoundControls />
                 </div>
-                <div className="absolute bottom-6 right-6 flex gap-2">
-                    <div className="relative z-50">
-                        <ChangeBackground
-                            currentBackground={currentBackground}
-                            onBackgroundChange={handleBackgroundChange}
-                        />
+                <div className="fixed bottom-0 left-0 right-0 p-2 lg:p-6">
+                    <div className="flex justify-between items-end flex-wrap gap-2 lg:gap-4">
+                        <MusicPlayer />
                     </div>
+                </div>
+                <div className="fixed bottom-2 right-2 lg:right-6 lg:bottom-6 flex flex-col-reverse lg:flex-row gap-2 lg:gap-4 flex-wrap">
+                    <ChangeBackground
+                        currentBackground={currentBackground}
+                        onBackgroundChange={handleBackgroundChange}
+                    />
                     <ActiveUsers />
                 </div>
                 <ShowNoti show={showGuide} setShow={setShowGuide} />
             </div>
-        </div>
+        </main>
     );
 }

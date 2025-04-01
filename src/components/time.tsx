@@ -20,8 +20,8 @@ const Time = () => {
     const displayHours = hours % 12 || 12;
 
     return (
-        <div className="px-6 py-4 rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-center space-x-3 text-5xl font-mono tracking-tight">
+        <div className="px-3 py-2 lg:px-6 lg:py-4 rounded-xl lg:rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-center space-x-1 lg:space-x-3 text-2xl sm:text-3xl lg:text-5xl font-mono tracking-tight">
                 <div className="flex">
                     {displayHours
                         .toString()
@@ -32,7 +32,7 @@ const Time = () => {
                                 value={parseInt(digit) as Value}
                                 trend={0}
                                 format={{ notation: "compact" }}
-                                className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
+                                className="w-6 sm:w-8 lg:w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
                             />
                         ))}
                 </div>
@@ -46,11 +46,11 @@ const Time = () => {
                             value={parseInt(digit) as Value}
                             trend={0}
                             format={{ notation: "compact" }}
-                            className="w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
+                            className="w-6 sm:w-8 lg:w-10 text-center font-bold text-zinc-900 dark:text-zinc-100"
                         />
                     ))}
                 </div>
-                <span className="text-zinc-900 dark:text-zinc-100 text-2xl ml-2 font-bold">
+                <span className="text-zinc-900 dark:text-zinc-100 text-lg sm:text-xl lg:text-2xl ml-1 lg:ml-2 font-bold">
                     {ampm}
                 </span>
             </div>

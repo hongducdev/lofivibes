@@ -138,11 +138,9 @@ export const MusicPlayer = () => {
         (channel: Channel) => {
             setCurrentChannel(channel);
             if (isPlaying) {
-                // Clear any existing timeout
                 if (autoPlayTimeoutRef.current) {
                     clearTimeout(autoPlayTimeoutRef.current);
                 }
-                // Wait for the video to load then play
                 autoPlayTimeoutRef.current = setTimeout(() => {
                     playerRef.current?.playVideo();
                 }, 1000);
@@ -276,7 +274,7 @@ export const MusicPlayer = () => {
                 />
             </div>
             <motion.div
-                className="fixed bottom-6 left-1/2 bg-background/80 backdrop-blur-md p-6 rounded-2xl shadow-lg z-50 w-[400px]"
+                className="fixed lg:bottom-6 left-1/2 bg-background/80 backdrop-blur-md p-4 lg:p-6 rounded-xl lg:rounded-2xl shadow-lg z-50 w-[95%] max-w-[400px] sm:w-[400px]"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -284,7 +282,7 @@ export const MusicPlayer = () => {
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
             >
-                <div className={`flex flex-col ${isHovered ? "gap-4" : ""}`}>
+                <div className="flex flex-col gap-4">
                     {/* Channel info */}
                     <div className="flex items-center justify-between">
                         <motion.div
@@ -293,10 +291,10 @@ export const MusicPlayer = () => {
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <h3 className="font-semibold text-lg">
+                            <h3 className="font-semibold text-base lg:text-lg">
                                 {currentChannel.name}
                             </h3>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="hidden lg:block text-sm text-muted-foreground">
                                 {currentChannel.description}
                             </p>
                         </motion.div>
@@ -307,7 +305,7 @@ export const MusicPlayer = () => {
                                     size="icon"
                                     className="hover:bg-primary/20"
                                 >
-                                    <Radio className="h-5 w-5" />
+                                    <Radio className="h-4 w-4 lg:h-5 lg:w-5" />
                                 </Button>
                             </HoverCardTrigger>
                             <HoverCardContent className="w-80 p-2" side="top">
@@ -341,15 +339,15 @@ export const MusicPlayer = () => {
                         <motion.div
                             variants={controlsVariants}
                             initial="hidden"
-                            animate={isHovered ? "visible" : "hidden"}
+                            animate={isHovered || window.innerWidth <= 1024 ? "visible" : "hidden"}
                             className="overflow-hidden"
                         >
                             <motion.div
                                 variants={controlsContentVariants}
-                                className="flex flex-col gap-4"
+                                className="flex flex-col gap-3 lg:gap-4"
                             >
                                 <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 lg:gap-2">
                                         <Button
                                             variant="ghost"
                                             size="icon"
@@ -357,9 +355,9 @@ export const MusicPlayer = () => {
                                             className="hover:bg-primary/20"
                                         >
                                             {isPlaying ? (
-                                                <Pause className="h-5 w-5" />
+                                                <Pause className="h-4 w-4 lg:h-5 lg:w-5" />
                                             ) : (
-                                                <Play className="h-5 w-5" />
+                                                <Play className="h-4 w-4 lg:h-5 lg:w-5" />
                                             )}
                                         </Button>
                                         <Button
@@ -380,18 +378,18 @@ export const MusicPlayer = () => {
                                             }
                                             className="hover:bg-primary/20"
                                         >
-                                            <SkipForward className="h-5 w-5" />
+                                            <SkipForward className="h-4 w-4 lg:h-5 lg:w-5" />
                                         </Button>
                                     </div>
 
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 lg:gap-2">
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             onClick={handlePictureInPicture}
                                             className="hover:bg-primary/20"
                                         >
-                                            <PictureInPicture2 className="h-5 w-5" />
+                                            <PictureInPicture2 className="h-4 w-4 lg:h-5 lg:w-5" />
                                         </Button>
                                         <Button
                                             variant="ghost"
@@ -400,16 +398,16 @@ export const MusicPlayer = () => {
                                             className="hover:bg-primary/20"
                                         >
                                             {isFullscreen ? (
-                                                <Minimize2 className="h-5 w-5" />
+                                                <Minimize2 className="h-4 w-4 lg:h-5 lg:w-5" />
                                             ) : (
-                                                <Maximize2 className="h-5 w-5" />
+                                                <Maximize2 className="h-4 w-4 lg:h-5 lg:w-5" />
                                             )}
                                         </Button>
                                     </div>
                                 </div>
 
                                 {/* Volume control */}
-                                <div className="flex items-center gap-4">
+                                <div className="hidden lg:flex items-center gap-2 lg:gap-4">
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -421,9 +419,9 @@ export const MusicPlayer = () => {
                                         className="hover:bg-primary/20"
                                     >
                                         {volume === 0 ? (
-                                            <VolumeX className="h-5 w-5" />
+                                            <VolumeX className="h-4 w-4 lg:h-5 lg:w-5" />
                                         ) : (
-                                            <Volume2 className="h-5 w-5" />
+                                            <Volume2 className="h-4 w-4 lg:h-5 lg:w-5" />
                                         )}
                                     </Button>
                                     <Slider
