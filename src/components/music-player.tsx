@@ -63,6 +63,7 @@ export const MusicPlayer = () => {
     const [currentChannel, setCurrentChannel] = useState<Channel>(CHANNELS[0]);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const playerRef = useRef<YouTubePlayer>(null);
     const autoPlayTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -217,6 +218,21 @@ export const MusicPlayer = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 1024);
+        };
+
+        // Check initial
+        checkMobile();
+
+        // Add event listener
+        window.addEventListener('resize', checkMobile);
+
+        // Cleanup
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     const onReady = (event: YouTubeEvent) => {
         playerRef.current = event.target;
         if (playerRef.current) {
@@ -339,7 +355,7 @@ export const MusicPlayer = () => {
                         <motion.div
                             variants={controlsVariants}
                             initial="hidden"
-                            animate={isHovered || window.innerWidth <= 1024 ? "visible" : "hidden"}
+                            animate={isHovered || isMobile ? "visible" : "hidden"}
                             className="overflow-hidden"
                         >
                             <motion.div

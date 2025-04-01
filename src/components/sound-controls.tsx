@@ -79,7 +79,7 @@ const SoundControls = () => {
     ];
 
     return (
-        <div className="fixed right-2 lg:left-6 lg:top-1/2 top-1/4 -translate-y-1/2 flex flex-col items-center gap-4 p-2 rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 group">
+        <div className="fixed right-2 lg:left-6 lg:right-auto lg:top-1/2 top-1/4 -translate-y-1/2 flex flex-col items-center gap-4 p-2 rounded-2xl bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 group">
             <div className="flex lg:flex-col gap-2">
                 <Button
                     variant="ghost"
