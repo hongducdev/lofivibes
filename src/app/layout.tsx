@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         type: "website",
         images: [
             {
-                url: `${siteConfig.url}/assets/images/preview.png`,
+                url: `${siteConfig.url}assets/images/preview.png`,
                 alt: siteConfig.name,
             },
         ],
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: siteConfig.name,
         description: siteConfig.description,
-        images: [`${siteConfig.url}/assets/images/preview.png`],
+        images: [`${siteConfig.url}assets/images/preview.png`],
     },
 };
 
