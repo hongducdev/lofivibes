@@ -18,6 +18,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
+    metadataBase: new URL(siteConfig.url),
+    keywords: ["lofi", "music", "study", "relax", "ambient", "focus", "productivity"],
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+        },
+    },
+    publisher: siteConfig.name,
+    alternates: {
+        canonical: `${siteConfig.url}`,
+    },
     openGraph: {
         title: siteConfig.name,
         description: siteConfig.description,
