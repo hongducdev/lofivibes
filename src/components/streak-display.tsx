@@ -130,7 +130,7 @@ export const StreakDisplay = () => {
     if (session) {
       fetchStreakInfo();
     }
-  }, [session]);
+  }, [session, fetchStreakInfo]);
 
   // Track user activity
   const trackUserActivity = () => {
@@ -195,7 +195,7 @@ export const StreakDisplay = () => {
         activityInterval.current = null;
       }
     };
-  }, [streakInfo?.activeSession, goalCompleted]);
+  }, [streakInfo?.activeSession, goalCompleted, endSession]);
 
   // Update server with activity time periodically
   useEffect(() => {

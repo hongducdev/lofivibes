@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,7 +58,7 @@ export const Header = () => {
       return;
     }
 
-    const response = await fetch("/api/streak", {
+    await fetch("/api/streak", {
       method: "POST",
     });
     await fetchStreakInfo();
@@ -96,7 +97,7 @@ export const Header = () => {
     }, 60000); // Update every minute
 
     return () => clearInterval(timer);
-  }, [streakInfo?.activeSession, timeLeft]);
+  }, [streakInfo?.activeSession, timeLeft, endSession]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-sm">
@@ -201,9 +202,11 @@ export const Header = () => {
                   aria-label="Open user menu"
                 >
                   {session.user?.image ? (
-                    <img 
+                    <Image 
                       src={session.user.image} 
                       alt={session.user.name || "User profile"} 
+                      width={32}
+                      height={32}
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (

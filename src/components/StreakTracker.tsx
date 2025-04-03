@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ export const StreakTracker = () => {
         await fetchStreakInfo();
     };
 
-    const endSession = async () => {
+    const endSession = useCallback(async () => {
         if (!streakInfo?.activeSession) return;
 
         await fetch("/api/streak", {
@@ -56,7 +56,7 @@ export const StreakTracker = () => {
             body: JSON.stringify({ sessionId: streakInfo.activeSession.id }),
         });
         await fetchStreakInfo();
-    };
+    }, [streakInfo, fetchStreakInfo]);
 
     useEffect(() => {
         if (session) {
