@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/config/site-config";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/theme-provider";
+
+import { Providers } from "@/components/providers";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -19,7 +19,15 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     metadataBase: new URL(siteConfig.url),
-    keywords: ["lofi", "music", "study", "relax", "ambient", "focus", "productivity"],
+    keywords: [
+        "lofi",
+        "music",
+        "study",
+        "relax",
+        "ambient",
+        "focus",
+        "productivity",
+    ],
     robots: {
         index: true,
         follow: true,
@@ -62,15 +70,9 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    {children}
-                    <Toaster />
-                </ThemeProvider>
+                <Providers>
+                    <main className="container">{children}</main>
+                </Providers>
             </body>
         </html>
     );

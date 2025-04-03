@@ -7,6 +7,7 @@ import Settings from "@/components/settings";
 import Time from "@/components/time";
 import TodoList from "@/components/todolist";
 import ThemeToggle from "@/components/theme-toggle";
+import { StreakDisplay } from "@/components/streak-display";
 import { VideoBackground } from "@/components/video-background";
 import { MusicPlayer } from "@/components/music-player";
 import SoundControls from "@/components/sound-controls";
@@ -57,6 +58,7 @@ export default function Home() {
                     </div>
                     <div className="flex flex-col items-end gap-2 lg:gap-4">
                         <div className="flex items-center gap-4 flex-wrap justify-end">
+                            <StreakDisplay />
                             <AboutMe />
                             <ThemeToggle />
                             <TodoList />
