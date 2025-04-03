@@ -42,10 +42,9 @@ export const StreakTracker = () => {
             return;
         }
 
-        const response = await fetch("/api/streak", {
+        await fetch("/api/streak", {
             method: "POST",
         });
-        const data = await response.json();
         await fetchStreakInfo();
     };
 
@@ -80,7 +79,7 @@ export const StreakTracker = () => {
         }, 60000); // Update every minute
 
         return () => clearInterval(timer);
-    }, [streakInfo?.activeSession, timeLeft]);
+    }, [streakInfo?.activeSession, timeLeft, endSession]);
 
     if (!session) {
         return (

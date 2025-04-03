@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
     backgroundConfig,
@@ -32,9 +33,11 @@ export default function ChangeBackground({
                     size="sm"
                     className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-800 dark:text-zinc-500 bg-background/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-lg transition-all duration-300 hover:bg-background/90 h-[38px]"
                 >
-                    <img
+                    <Image
                         src={`${currentBackground.url}/${currentBackground.image}`}
                         alt={currentBackground.name}
+                        width={24}
+                        height={24}
                         className="w-6 h-6 object-cover rounded"
                     />
                     <span>Change Scene</span>
@@ -58,9 +61,11 @@ export default function ChangeBackground({
                                 )}
                             >
                                 <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-                                    <img
+                                    <Image
                                         src={`${background.url}/${background.image}`}
                                         alt={background.name}
+                                        width={320}
+                                        height={180}
                                         className="w-full h-full object-cover"
                                     />
                                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />

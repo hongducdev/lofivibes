@@ -122,7 +122,7 @@ const Pomodoro = () => {
         window.addEventListener("pomodoroSettingsChanged", loadSettings);
         return () =>
             window.removeEventListener("pomodoroSettingsChanged", loadSettings);
-    }, [timerState]);
+    }, [timerState, config]);
 
     const handleReset = useCallback(() => {
         const newTime = config[timerState];

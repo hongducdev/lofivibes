@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,7 +32,6 @@ const GOAL_MINUTES = 30;
 
 export const StreakDisplay = () => {
   const { data: session } = useSession();
-  const router = useRouter();
   const [streakInfo, setStreakInfo] = useState<StreakInfo | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [activeTime, setActiveTime] = useState<number>(0);
@@ -41,7 +40,7 @@ export const StreakDisplay = () => {
   const lastActivityTime = useRef<number>(Date.now());
   const activityInterval = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchStreakInfo = async () => {
+  const fetchStreakInfo = useRef(async () => {
     try {
       const response = await fetch("/api/streak");
       
@@ -79,7 +78,7 @@ export const StreakDisplay = () => {
       setStreakInfo({ currentStreak: 1, activeSession: null });
       setActiveTime(0);
     }
-  };
+  }).current;
 
   const startSession = async () => {
     if (!session) {
@@ -103,7 +102,7 @@ export const StreakDisplay = () => {
     }
   };
 
-  const endSession = async () => {
+  const endSession = useRef(async () => {
     if (!streakInfo?.activeSession) return;
 
     try {
@@ -121,7 +120,7 @@ export const StreakDisplay = () => {
     } catch (error) {
       console.error("Failed to end streak session:", error);
     }
-  };
+  }).current;
 
   useEffect(() => {
     // Always set a default value first
@@ -140,13 +139,11 @@ export const StreakDisplay = () => {
 
   // Setup activity detection
   useEffect(() => {
-    // Debug info
-    console.log("Activity tracking - streakInfo:", streakInfo);
-    console.log("Activity tracking - activeTime:", activeTime);
+    // Only track if there's an active session or we're in simulation mode
+    const isSimulationMode = !streakInfo?.activeSession;
     
-    // Only track if there's an active session
-    if (!streakInfo?.activeSession) {
-      // Even without an active session, we'll simulate activity for testing
+    if (isSimulationMode) {
+      // Simulate activity for testing without a real session
       const testInterval = setInterval(() => {
         setActiveTime(prev => Math.min(GOAL_MINUTES, prev + (1/60)));
       }, 1000);
@@ -202,9 +199,6 @@ export const StreakDisplay = () => {
 
   // Update server with activity time periodically
   useEffect(() => {
-    console.log("Server update - activeTime:", activeTime);
-    console.log("Server update - streakInfo:", streakInfo);
-    
     if (!streakInfo?.activeSession || timeLeft === 0) return;
 
     const timer = setInterval(() => {
@@ -308,9 +302,11 @@ export const StreakDisplay = () => {
                 <h3 className="text-sm font-medium">Account Information</h3>
                 <div className="flex items-center gap-3">
                   {session.user?.image ? (
-                    <img 
-                      src={session.user.image} 
+                    <Image 
+                      src={session.user.image || ''} 
                       alt={session.user.name || "User profile"} 
+                      width={40}
+                      height={40}
                       className="h-10 w-10 rounded-full object-cover"
                     />
                   ) : (
