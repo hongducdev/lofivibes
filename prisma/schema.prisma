@@ -73,6 +73,8 @@ model Streak {
   userId        String          @unique @db.ObjectId
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   currentStreak Int            @default(1)
+  highestStreak Int            @default(1)
+  todayActiveTime Float         @default(0)
   lastActivity  DateTime       @default(now())
   streakSessions StreakSession[]
 }
@@ -83,5 +85,5 @@ model StreakSession {
   streak    Streak   @relation(fields: [streakId], references: [id], onDelete: Cascade)
   startTime DateTime @default(now())
   endTime   DateTime?
-  duration  Int      @default(0) // Duration in minutes
+  duration  Int      @default(0)
 }

@@ -43,4 +43,10 @@ export const authConfig = {
   debug: process.env.NODE_ENV === "development",
 };
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+export const { auth, signIn, signOut } = NextAuth(authConfig);
+
+// Tạo handlers cho API route
+export const handlers = {
+  GET: auth,
+  POST: auth
+};

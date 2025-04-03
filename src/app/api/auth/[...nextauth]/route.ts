@@ -13,10 +13,23 @@ const handler = NextAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
     ],
+    session: {
+        strategy: "jwt",
+    },
+    secret: process.env.NEXTAUTH_SECRET,
+    jwt: {
+        secret: process.env.NEXTAUTH_SECRET,
+    },
     callbacks: {
-        async session({ session, user }) {
+        async jwt({ token, user }) {
+            if (user) {
+                token.userId = user.id;
+            }
+            return token;
+        },
+        async session({ session, token }) {
             if (session.user) {
-                session.user.id = user.id;
+                session.user.id = token.userId as string;
             }
             return session;
         },

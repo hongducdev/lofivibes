@@ -106,7 +106,6 @@ export async function GET() {
     try {
         const session = await getServerSession();
     
-        // Nếu không có phiên đăng nhập, trả về dữ liệu mặc định thay vì lỗi 401
         if (!session?.user?.email) {
             console.log("No session found, returning default streak data");
             return NextResponse.json({ 
@@ -139,6 +138,8 @@ export async function GET() {
 
         return NextResponse.json({
             currentStreak: user.streak.currentStreak,
+            highestStreak: user.streak.highestStreak,
+            todayActiveTime: user.streak.todayActiveTime,
             activeSession: isSessionActive ? activeSession : null,
         });
     } catch (error) {
