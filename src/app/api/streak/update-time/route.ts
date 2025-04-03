@@ -106,8 +106,6 @@ export async function POST(req: Request) {
       const now = Date.now();
       const sessionDurationMinutes = Math.floor((now - startTime) / (1000 * 60));
       
-      console.log(`Session ${sessionId} duration: ${sessionDurationMinutes} minutes (from ${new Date(startTime).toISOString()} to ${new Date(now).toISOString()})`);
-      
       await prisma.streakSession.update({
         where: { id: sessionId },
         data: {
