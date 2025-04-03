@@ -13,7 +13,28 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { activeTime, sessionId } = await req.json();
+    // Kiểm tra nếu request có body
+    const text = await req.text();
+    if (!text) {
+      return NextResponse.json(
+        { error: "Empty request body" },
+        { status: 400 }
+      );
+    }
+
+    // Parse JSON an toàn
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error("JSON parse error:", e, "Raw text:", text);
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+
+    const { activeTime, sessionId } = data;
 
     // Validate input
     if (typeof activeTime !== 'number' || !sessionId) {
@@ -74,14 +95,28 @@ export async function POST(req: Request) {
         lastActivity: new Date(),
       },
     });
-    
-    // Cập nhật phiên hiện tại với thời gian sử dụng
-    await prisma.streakSession.update({
+
+    const sessionStartTime = await prisma.streakSession.findUnique({
       where: { id: sessionId },
-      data: {
-        duration: Math.floor(newActiveTime)
-      }
+      select: { startTime: true }
     });
+    
+    if (sessionStartTime) {
+      const startTime = new Date(sessionStartTime.startTime).getTime();
+      const now = Date.now();
+      const sessionDurationMinutes = Math.floor((now - startTime) / (1000 * 60));
+      
+      console.log(`Session ${sessionId} duration: ${sessionDurationMinutes} minutes (from ${new Date(startTime).toISOString()} to ${new Date(now).toISOString()})`);
+      
+      await prisma.streakSession.update({
+        where: { id: sessionId },
+        data: {
+          duration: sessionDurationMinutes
+        }
+      });
+    } else {
+      console.error(`Session ${sessionId} not found when updating duration`);
+    }
 
     // If user completed 30 minutes, update their stats
     if (activeTime >= 30) {

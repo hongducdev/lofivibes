@@ -51,7 +51,13 @@ export async function GET() {
     const monthlyActivity = dailyActivity;
 
     // Calculate statistics
+    // Chỉ tính thời gian trong 30 ngày gần nhất để tránh tính trùng lặp
     const totalMinutes = dailyActivity.reduce((sum, day) => sum + day.minutes, 0);
+    
+    // Log để debug
+    console.log("Daily activity for stats calculation:", 
+      dailyActivity.map(day => ({ date: day.date, minutes: day.minutes })));
+    console.log("Total minutes calculated:", totalMinutes);
     const averageMinutesPerDay = totalMinutes / dailyActivity.length;
     const totalDays = dailyActivity.filter(day => day.minutes > 0).length;
     const completedDays = dailyActivity.filter(day => day.minutes >= 30).length;
@@ -103,7 +109,13 @@ function processSessionsIntoDaily(sessions: StreakSessionData[]) {
     const dateString = startDate.toISOString().split('T')[0];
     
     if (dailyMap.has(dateString)) {
+      // Đảm bảo duration được lưu dưới dạng phút
       const minutes = session.duration || 0;
+      
+      // Log để debug
+      console.log(`Adding session: date=${dateString}, duration=${minutes} minutes`);
+      
+      // Cộng dồn thời gian cho ngày tương ứng
       dailyMap.set(dateString, (dailyMap.get(dateString) || 0) + minutes);
     }
   });
