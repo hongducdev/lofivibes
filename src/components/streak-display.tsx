@@ -62,29 +62,28 @@ export const StreakDisplay = () => {
 
             if (data.activeSession) {
                 const activeTimeFromDB = data.todayActiveTime || 0;
-                
+
                 const startTime = new Date(
                     data.activeSession.startTime
                 ).getTime();
                 const now = Date.now();
                 const elapsed = Math.floor((now - startTime) / 1000 / 60);
-                
+
                 // Don't cap the minutes at GOAL_MINUTES to track full usage time
-                const minutesUsed = Math.max(
-                    activeTimeFromDB,
-                    elapsed
-                );
-                
+                const minutesUsed = Math.max(activeTimeFromDB, elapsed);
+
                 setActiveTime(minutesUsed);
                 setTimeLeft(Math.max(0, GOAL_MINUTES - elapsed));
 
                 if (minutesUsed >= GOAL_MINUTES && !goalCompleted) {
                     setGoalCompleted(true);
-                    
+
                     // Only show notification if it hasn't been shown today
                     const today = new Date().toDateString();
-                    const lastNotificationDay = localStorage.getItem('lastStreakNotificationDay');
-                    
+                    const lastNotificationDay = localStorage.getItem(
+                        "lastStreakNotificationDay"
+                    );
+
                     if (lastNotificationDay !== today && !notificationShown) {
                         toast.success(
                             "Congratulations! You've completed your 30-minute daily goal!",
@@ -92,7 +91,10 @@ export const StreakDisplay = () => {
                                 duration: 5000,
                             }
                         );
-                        localStorage.setItem('lastStreakNotificationDay', today);
+                        localStorage.setItem(
+                            "lastStreakNotificationDay",
+                            today
+                        );
                         setNotificationShown(true);
                     }
                 }
@@ -157,10 +159,12 @@ export const StreakDisplay = () => {
     // Check if notification has been shown today
     useEffect(() => {
         const today = new Date().toDateString();
-        const lastNotificationDay = localStorage.getItem('lastStreakNotificationDay');
+        const lastNotificationDay = localStorage.getItem(
+            "lastStreakNotificationDay"
+        );
         const notificationShownToday = lastNotificationDay === today;
         setNotificationShown(notificationShownToday);
-        
+
         // Reset notification state if it's a new day
         if (!notificationShownToday && goalCompleted) {
             setGoalCompleted(false);
@@ -212,7 +216,7 @@ export const StreakDisplay = () => {
         window.addEventListener("scroll", trackUserActivity);
         window.addEventListener("touchstart", trackUserActivity);
 
-        const savedTime = sessionStorage.getItem('activeTime');
+        const savedTime = sessionStorage.getItem("activeTime");
         if (savedTime) {
             const parsedTime = parseFloat(savedTime);
             if (!isNaN(parsedTime) && parsedTime > 0) {
@@ -229,13 +233,14 @@ export const StreakDisplay = () => {
                 setActiveTime((prev) => {
                     // Don't cap the time at GOAL_MINUTES to track full usage
                     const newTime = prev + 1 / 60;
-                    
-                    sessionStorage.setItem('activeTime', newTime.toString());
+
+                    sessionStorage.setItem("activeTime", newTime.toString());
 
                     if (
                         session &&
                         streakInfo?.activeSession &&
-                        Math.floor(newTime * 20) > Math.floor(prev * 20)
+                        (Math.floor(newTime * 4) > Math.floor(prev * 4) ||
+                            Date.now() % 15000 < 1000)
                     ) {
                         fetch("/api/streak/update-time", {
                             method: "POST",
@@ -256,19 +261,26 @@ export const StreakDisplay = () => {
 
                     if (prev < GOAL_MINUTES && newTime >= GOAL_MINUTES) {
                         setGoalCompleted(true);
-                        
-                        // Only show notification if it hasn't been shown today
+
                         const today = new Date().toDateString();
-                        const lastNotificationDay = localStorage.getItem('lastStreakNotificationDay');
-                        
-                        if (lastNotificationDay !== today && !notificationShown) {
+                        const lastNotificationDay = localStorage.getItem(
+                            "lastStreakNotificationDay"
+                        );
+
+                        if (
+                            lastNotificationDay !== today &&
+                            !notificationShown
+                        ) {
                             toast.success(
                                 "Congratulations! You've completed your 30-minute daily goal!",
                                 {
                                     duration: 5000,
                                 }
                             );
-                            localStorage.setItem('lastStreakNotificationDay', today);
+                            localStorage.setItem(
+                                "lastStreakNotificationDay",
+                                today
+                            );
                             setNotificationShown(true);
                         }
                     }
@@ -337,9 +349,11 @@ export const StreakDisplay = () => {
 
         const updateServerTime = () => {
             if (streakInfo?.activeSession) {
-                const savedTime = sessionStorage.getItem('activeTime');
-                const timeToUpdate = savedTime ? Math.max(parseFloat(savedTime), activeTime) : activeTime;
-                
+                const savedTime = sessionStorage.getItem("activeTime");
+                const timeToUpdate = savedTime
+                    ? Math.max(parseFloat(savedTime), activeTime)
+                    : activeTime;
+
                 fetch("/api/streak/update-time", {
                     method: "POST",
                     headers: {
@@ -361,7 +375,10 @@ export const StreakDisplay = () => {
                     .then((data) => {
                         if (data.activeTime && data.activeTime > activeTime) {
                             setActiveTime(data.activeTime);
-                            sessionStorage.setItem('activeTime', data.activeTime.toString());
+                            sessionStorage.setItem(
+                                "activeTime",
+                                data.activeTime.toString()
+                            );
                         }
                     })
                     .catch((error) => {
@@ -371,14 +388,14 @@ export const StreakDisplay = () => {
         };
 
         updateServerTime();
-        
+
         const serverUpdateTimer = setInterval(updateServerTime, 15000);
 
-        window.addEventListener('beforeunload', updateServerTime);
+        window.addEventListener("beforeunload", updateServerTime);
 
         return () => {
             clearInterval(serverUpdateTimer);
-            window.removeEventListener('beforeunload', updateServerTime);
+            window.removeEventListener("beforeunload", updateServerTime);
             updateServerTime();
         };
     }, [streakInfo?.activeSession, activeTime, session]);
@@ -408,7 +425,9 @@ export const StreakDisplay = () => {
                         tabIndex={0}
                         aria-label="Your streak information"
                         role="button"
-                        onKeyDown={(e) => e.key === 'Enter' && setIsDialogOpen(true)}
+                        onKeyDown={(e) =>
+                            e.key === "Enter" && setIsDialogOpen(true)
+                        }
                     >
                         <span className="text-sm font-medium text-foreground">
                             {streakInfo?.currentStreak || 1}
@@ -426,10 +445,15 @@ export const StreakDisplay = () => {
                     <Tabs defaultValue="overview" className="mt-2">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="overview">Overview</TabsTrigger>
-                            <TabsTrigger value="statistics">Statistics</TabsTrigger>
+                            <TabsTrigger value="statistics">
+                                Statistics
+                            </TabsTrigger>
                         </TabsList>
-                        
-                        <TabsContent value="overview" className="space-y-4 py-4">
+
+                        <TabsContent
+                            value="overview"
+                            className="space-y-4 py-4"
+                        >
                             {/* Streak Information */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-primary/5">
@@ -485,7 +509,8 @@ export const StreakDisplay = () => {
                                         className="h-full bg-primary transition-all"
                                         style={{
                                             width: `${
-                                                (activeTime / GOAL_MINUTES) * 100
+                                                (activeTime / GOAL_MINUTES) *
+                                                100
                                             }%`,
                                         }}
                                     />
@@ -548,10 +573,12 @@ export const StreakDisplay = () => {
                                 </div>
                             ) : (
                                 <div className="space-y-3">
-                                    <h3 className="text-sm font-medium">Account</h3>
+                                    <h3 className="text-sm font-medium">
+                                        Account
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Sign in with your Google account to track
-                                        your streak progress and unlock
+                                        Sign in with your Google account to
+                                        track your streak progress and unlock
                                         achievements.
                                     </p>
                                     <Button
@@ -575,15 +602,16 @@ export const StreakDisplay = () => {
                                             How streaks work
                                         </h4>
                                         <p className="text-xs text-muted-foreground mt-1">
-                                            Use LofiVibes for at least 30 minutes
-                                            each day to maintain your streak. If you
-                                            miss a day, your streak will reset to 1.
+                                            Use LofiVibes for at least 30
+                                            minutes each day to maintain your
+                                            streak. If you miss a day, your
+                                            streak will reset to 1.
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </TabsContent>
-                        
+
                         <TabsContent value="statistics" className="py-4">
                             <UserStats />
                         </TabsContent>

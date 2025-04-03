@@ -77,8 +77,15 @@ export async function GET() {
   }
 }
 
+type StreakSessionData = {
+  id: string;
+  startTime: Date | string;
+  endTime?: Date | string | null;
+  duration: number;
+};
+
 // Process sessions into daily activity data
-function processSessionsIntoDaily(sessions: any[]) {
+function processSessionsIntoDaily(sessions: StreakSessionData[]) {
   const dailyMap = new Map<string, number>();
   const today = new Date();
   
@@ -135,6 +142,7 @@ function generateDemoData(days: number) {
       day: date.toLocaleDateString('en-US', { weekday: 'short' }),
       minutes,
       goal: Math.min(100, (minutes / 30) * 100),
+      actualGoalPercentage: (minutes / 30) * 100, // Thêm trường này để phù hợp với dữ liệu thật
     });
   }
   

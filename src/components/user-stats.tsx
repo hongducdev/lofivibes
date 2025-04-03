@@ -58,23 +58,6 @@ export const UserStats = () => {
     fetchStats();
   }, [session]);
 
-  const chartConfig = {
-    minutes: {
-      label: "Minutes",
-      theme: {
-        light: "hsl(var(--primary))",
-        dark: "hsl(var(--primary))",
-      },
-    },
-    goal: {
-      label: "Goal Completion",
-      theme: {
-        light: "hsl(var(--amber-500))",
-        dark: "hsl(var(--amber-500))",
-      },
-    },
-  };
-
   if (loading) {
     return <StatsLoading />;
   }
