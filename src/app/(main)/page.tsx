@@ -27,23 +27,54 @@ export default function Home() {
     const [currentBackground, setCurrentBackground] = useState<BackgroundVideo>(
         backgroundConfig[0]
     );
+    const [clockPosition, setClockPosition] = useState<"corner" | "center">("corner");
 
     useEffect(() => {
-        const saved = localStorage.getItem("selectedBackground");
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                setCurrentBackground(parsed);
-            } catch (error) {
-                console.error("Error parsing saved background:", error);
+        if (typeof window === 'undefined') return;
+        
+        try {
+            const saved = localStorage.getItem("selectedBackground");
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    setCurrentBackground(parsed);
+                } catch (error) {
+                    console.error("Error parsing saved background:", error);
+                }
             }
+            
+            const savedPosition = localStorage.getItem("clockPosition");
+            if (savedPosition === "center" || savedPosition === "corner") {
+                setClockPosition(savedPosition);
+            }
+            
+            const handleSettingsChange = () => {
+                const updatedPosition = localStorage.getItem("clockPosition");
+                if (updatedPosition === "center" || updatedPosition === "corner") {
+                    setClockPosition(updatedPosition);
+                }
+            };
+            
+            window.addEventListener("clockSettingsChanged", handleSettingsChange);
+            
+            return () => {
+                window.removeEventListener("clockSettingsChanged", handleSettingsChange);
+            };
+        } catch (error) {
+            console.error("Error in client-side initialization:", error);
         }
     }, []);
 
     const handleBackgroundChange = (background: BackgroundVideo) => {
         setCurrentBackground(background);
-        localStorage.setItem("selectedBackground", JSON.stringify(background));
+        try {
+            localStorage.setItem("selectedBackground", JSON.stringify(background));
+        } catch (error) {
+            console.error("Error saving background to localStorage:", error);
+        }
     };
+
+
 
     return (
         <main className="relative h-screen w-screen overflow-hidden">
@@ -52,9 +83,16 @@ export default function Home() {
             <OrientationOverlay />
             <VideoBackground currentBackground={currentBackground} />
             <div className="relative z-20 flex flex-col min-h-screen p-2 lg:p-6">
+                {clockPosition === "center" && (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30">
+                        <Time position={clockPosition} />
+                    </div>
+                )}
                 <div className="flex justify-between items-start">
                     <div className="flex flex-col gap-4">
-                        <Time />
+                        {clockPosition === "corner" && (
+                            <Time position={clockPosition} />
+                        )}
                     </div>
                     <div className="flex flex-col items-end gap-2 lg:gap-4">
                         <div className="flex items-center gap-4 flex-wrap justify-end">
