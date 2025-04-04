@@ -127,13 +127,13 @@ const Settings = () => {
             window.dispatchEvent(clockEvent);
             
             if (typeof window !== 'undefined') {
-                // @ts-ignore
+                // @ts-expect-error
                 window.__updateClockStyle = appSettings.clockStyle;
-                // @ts-ignore
+                // @ts-expect-error
                 window.__updateClockBackground = appSettings.disableClockBackground;
-                // @ts-ignore
+                // @ts-expect-error
                 window.__updateClockColor = appSettings.clockColor;
-                // @ts-ignore
+                // @ts-expect-error
                 window.__updateClockSize = appSettings.clockSize;
             }
             

@@ -95,29 +95,29 @@ const Time = ({ position = "corner" }: TimeProps) => {
             setTime(new Date());
             
             if (typeof window !== 'undefined') {
-                // @ts-ignore
+                // @ts-expect-error
                 if (window.__updateClockStyle && window.__updateClockStyle !== clockStyle) {
-                    // @ts-ignore
+                    // @ts-expect-error
                     setClockStyle(window.__updateClockStyle);
                 }
                 
-                // @ts-ignore
+                // @ts-expect-error
                 if (window.__updateClockBackground !== undefined && 
-                    // @ts-ignore
+                    // @ts-expect-error
                     window.__updateClockBackground !== disableBackground) {
-                    // @ts-ignore
+                    // @ts-expect-error
                     setDisableBackground(window.__updateClockBackground);
                 }
                 
-                // @ts-ignore
+                // @ts-expect-error
                 if (window.__updateClockColor && window.__updateClockColor !== clockColor) {
-                    // @ts-ignore
+                    // @ts-expect-error
                     setClockColor(window.__updateClockColor);
                 }
                 
-                // @ts-ignore
+                // @ts-expect-error
                 if (window.__updateClockSize && window.__updateClockSize !== clockSize) {
-                    // @ts-ignore
+                    // @ts-expect-error
                     setClockSize(window.__updateClockSize);
                 }
             }
@@ -190,7 +190,7 @@ const Time = ({ position = "corner" }: TimeProps) => {
                         {[...Array(12)].map((_, i) => {
                             const angle = i * 30;
                             const radians = (angle * Math.PI) / 180;
-                            const clockRadius = 100; // Use percentage for positioning
+                            // Use percentage for positioning
                             const markerPositionX = 50 + 46 * Math.sin(radians); // 46% from center
                             const markerPositionY = 50 - 46 * Math.cos(radians); // 46% from center
                             
