@@ -114,7 +114,6 @@ function processSessionsIntoDaily(sessions: StreakSessionData[], todayActiveTime
     }
   });
   
-  // Thêm thời gian hoạt động hôm nay nếu có
   if (todayActiveTime > 0) {
     const todayString = today.toISOString().split('T')[0];
     const currentValue = dailyMap.get(todayString) || 0;
@@ -135,27 +134,4 @@ function processSessionsIntoDaily(sessions: StreakSessionData[], todayActiveTime
   });
   
   return result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-}
-
-function generateDemoData(days: number) {
-  const result = [];
-  const today = new Date();
-  
-  for (let i = 0; i < days; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    const dateString = date.toISOString().split('T')[0];
-    
-    const minutes = Math.floor(Math.random() * 30) + 15;
-    
-    result.push({
-      date: dateString,
-      day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-      minutes,
-      goal: Math.min(100, (minutes / 30) * 100),
-      actualGoalPercentage: (minutes / 30) * 100,
-    });
-  }
-  
-  return result;
 }
