@@ -10,7 +10,7 @@ export async function POST(req: Request) {
             data: {
                 text: body.text,
                 sender: body.sender,
-                timestamp: new Date(body.timestamp),
+                createdAt: body.timestamp ? new Date(body.timestamp) : new Date(),
             },
         });
 
