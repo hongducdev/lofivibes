@@ -75,25 +75,25 @@ export const UserStats = () => {
       <div className="grid grid-cols-2 gap-2">
         <StatCard
           title="Current Streak"
-          value={statsData.currentStreak}
+          value={statsData?.currentStreak || 0}
           description="consecutive days"
           icon="🔥"
         />
         <StatCard
           title="Highest Streak"
-          value={statsData.highestStreak}
+          value={statsData?.highestStreak || 0}
           description="consecutive days"
           icon="🏆"
         />
         <StatCard
           title="Total Time"
-          value={Math.round(statsData.totalMinutes)}
+          value={statsData?.totalMinutes ? Math.round(statsData.totalMinutes) : 0}
           description="minutes listening"
           icon="⏱️"
         />
         <StatCard
           title="Completion Rate"
-          value={Math.round(statsData.completionRate)}
+          value={statsData?.completionRate ? Math.round(statsData.completionRate) : 0}
           description="% of days completed"
           icon="✅"
         />
@@ -114,7 +114,7 @@ export const UserStats = () => {
             </CardHeader>
             <CardContent className="pt-0">
               <div className="space-y-2">
-                {statsData.weeklyActivity.slice(0, 7).reverse().map((day) => (
+                {(statsData?.weeklyActivity || []).slice(0, 7).reverse().map((day) => (
                   <div key={day.date} className="flex items-center gap-2">
                     <div className="w-10 text-xs text-muted-foreground">{day.day}</div>
                     <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden relative">
@@ -124,11 +124,11 @@ export const UserStats = () => {
                       />
                       {day.minutes > 30 && (
                         <div className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-white font-medium px-1 rounded">
-                          +{Math.floor(day.minutes - 30)}m
+                          +{Math.round(day.minutes - 30)}m
                         </div>
                       )}
                     </div>
-                    <div className="w-10 text-xs text-right">{day.minutes}m</div>
+                    <div className="w-10 text-xs text-right">{Math.round(day.minutes)}m</div>
                   </div>
                 ))}
               </div>
@@ -144,7 +144,7 @@ export const UserStats = () => {
             </CardHeader>
             <CardContent className="pt-0">
               <div className="space-y-2">
-                {statsData.weeklyActivity.slice(0, 7).reverse().map((day) => (
+                {(statsData?.weeklyActivity || []).slice(0, 7).reverse().map((day) => (
                   <div key={day.date} className="flex items-center gap-2">
                     <div className="w-10 text-xs text-muted-foreground">{day.day}</div>
                     <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden relative">
@@ -154,12 +154,12 @@ export const UserStats = () => {
                       />
                       {day.minutes > 30 && (
                         <div className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-white font-medium px-1 rounded">
-                          {Math.floor(day.minutes)}m
+                          {Math.round(day.minutes)}m
                         </div>
                       )}
                     </div>
                     <div className="w-10 text-xs text-right">
-                      {day.minutes > 30 ? `${Math.floor(day.minutes)}m` : `${Math.round(day.goal)}%`}
+                      {day.minutes > 30 ? `${Math.round(day.minutes)}m` : `${Math.round(day.goal)}%`}
                     </div>
                   </div>
                 ))}
@@ -183,7 +183,7 @@ export const UserStats = () => {
             </CardHeader>
             <CardContent className="pt-0">
               <div className="grid grid-cols-7 gap-1">
-                {statsData.monthlyActivity.slice(0, 14).reverse().map((day) => {
+                {(statsData?.monthlyActivity || []).slice(0, 14).reverse().map((day) => {
                   const date = new Date(day.date);
                   const dayNum = date.getDate();
                   const fillPercentage = Math.min(100, (day.minutes / 30) * 100);
@@ -240,7 +240,7 @@ export const UserStats = () => {
                   </div>
                   <div className="mt-1 flex items-baseline">
                     <div className="text-2xl font-semibold">
-                      {statsData.averageMinutesPerDay.toFixed(1)}
+                      {statsData?.averageMinutesPerDay ? statsData.averageMinutesPerDay.toFixed(1) : '0.0'}
                     </div>
                     <div className="ml-1 text-sm text-muted-foreground">
                       minutes

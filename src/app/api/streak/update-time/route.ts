@@ -36,15 +36,30 @@ export async function POST(req: Request) {
 
     const { activeTime, sessionId } = data;
 
-    // Validate input
-    if (typeof activeTime !== 'number' || !sessionId) {
+    // Validate input with kiểm tra kỹ lưỡng hơn
+    if (!sessionId || typeof sessionId !== 'string') {
       return NextResponse.json(
-        { error: "Invalid input data" },
+        { error: "Invalid sessionId" },
         { status: 400 }
       );
     }
+    
+    // Xử lý activeTime một cách an toàn
+    let safeActiveTime = 0;
+    if (typeof activeTime === 'number' && isFinite(activeTime) && !isNaN(activeTime)) {
+      safeActiveTime = Math.max(0, Math.min(activeTime, 1440)); // Giới hạn từ 0 đến 1440 phút (24 giờ)
+    } else if (typeof activeTime === 'string') {
+      // Cố gắng chuyển đổi từ string sang number nếu có thể
+      try {
+        const parsedTime = parseFloat(activeTime);
+        if (!isNaN(parsedTime) && isFinite(parsedTime)) {
+          safeActiveTime = Math.max(0, Math.min(parsedTime, 1440));
+        }
+      } catch (e) {
+        console.error("Error parsing activeTime string:", e);
+      }
+    }
 
-    // Get the user
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: {
@@ -80,18 +95,22 @@ export async function POST(req: Request) {
       select: { todayActiveTime: true }
     });
 
-    // Chỉ cập nhật nếu giá trị mới lớn hơn giá trị hiện tại
-    // Điều này đảm bảo tiến trình không bị giảm khi có nhiều request đồng thời
+    const MAX_DAILY_MINUTES = 1440; // 24 giờ x 60 phút
+    
+    // Sử dụng giá trị safeActiveTime đã được xử lý
     const newActiveTime = Math.max(
       currentStreak?.todayActiveTime || 0,
-      activeTime
+      safeActiveTime
     );
+    
+    // Giới hạn giá trị cuối cùng
+    const finalActiveTime = Math.min(newActiveTime, MAX_DAILY_MINUTES);
 
     // Update the streak with today's active time
     await prisma.streak.update({
       where: { id: user.streak.id },
       data: {
-        todayActiveTime: newActiveTime,
+        todayActiveTime: finalActiveTime,
         lastActivity: new Date(),
       },
     });

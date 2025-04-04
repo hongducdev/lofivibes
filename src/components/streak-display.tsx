@@ -62,23 +62,42 @@ export const StreakDisplay = () => {
 
             if (data.activeSession) {
                 const activeTimeFromDB = data.todayActiveTime || 0;
-
+                
+                const savedTimeStr = sessionStorage.getItem("activeTime");
+                const savedTime = savedTimeStr ? parseFloat(savedTimeStr) : 0;
+                
                 const startTime = new Date(
                     data.activeSession.startTime
                 ).getTime();
                 const now = Date.now();
                 const elapsed = Math.floor((now - startTime) / 1000 / 60);
 
-                // Don't cap the minutes at GOAL_MINUTES to track full usage time
-                const minutesUsed = Math.max(activeTimeFromDB, elapsed);
-
+                const minutesUsed = Math.max(activeTimeFromDB, elapsed, savedTime);
+                
+                sessionStorage.setItem("activeTime", minutesUsed.toString());
+                sessionStorage.setItem("sessionId", data.activeSession.id);
+                
                 setActiveTime(minutesUsed);
                 setTimeLeft(Math.max(0, GOAL_MINUTES - elapsed));
+
+                if (minutesUsed > activeTimeFromDB) {
+                    fetch("/api/streak/update-time", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            sessionId: data.activeSession.id,
+                            activeTime: minutesUsed,
+                        }),
+                    }).catch(error => {
+                        console.error("Failed to update activity time on reload:", error);
+                    });
+                }
 
                 if (minutesUsed >= GOAL_MINUTES && !goalCompleted) {
                     setGoalCompleted(true);
 
-                    // Only show notification if it hasn't been shown today
                     const today = new Date().toDateString();
                     const lastNotificationDay = localStorage.getItem(
                         "lastStreakNotificationDay"
@@ -99,6 +118,8 @@ export const StreakDisplay = () => {
                     }
                 }
             } else {
+                sessionStorage.removeItem("activeTime");
+                sessionStorage.removeItem("sessionId");
                 setActiveTime(0);
                 setGoalCompleted(false);
             }
@@ -156,7 +177,6 @@ export const StreakDisplay = () => {
         }
     }).current;
 
-    // Check if notification has been shown today
     useEffect(() => {
         const today = new Date().toDateString();
         const lastNotificationDay = localStorage.getItem(
@@ -165,7 +185,6 @@ export const StreakDisplay = () => {
         const notificationShownToday = lastNotificationDay === today;
         setNotificationShown(notificationShownToday);
 
-        // Reset notification state if it's a new day
         if (!notificationShownToday && goalCompleted) {
             setGoalCompleted(false);
         }
@@ -173,13 +192,47 @@ export const StreakDisplay = () => {
 
     useEffect(() => {
         if (session) {
+            const savedTimeStr = sessionStorage.getItem("activeTime");
+            
+            if (savedTimeStr) {
+                const savedTime = parseFloat(savedTimeStr);
+                if (!isNaN(savedTime) && savedTime > 0) {
+                    setActiveTime(savedTime);
+                }
+            }
+            
             fetchStreakInfo();
+            
             const autoStartSession = async () => {
                 const response = await fetch("/api/streak");
                 if (response.ok) {
                     const data = await response.json();
                     if (!data.activeSession) {
-                        startSession();
+                        if (savedTimeStr && parseFloat(savedTimeStr) > 0) {
+                            const sessionResponse = await fetch("/api/streak", {
+                                method: "POST",
+                            });
+                            
+                            if (sessionResponse.ok) {
+                                const sessionData = await sessionResponse.json();
+                                if (sessionData.activeSession) {
+                                    fetch("/api/streak/update-time", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                            sessionId: sessionData.activeSession.id,
+                                            activeTime: parseFloat(savedTimeStr),
+                                        }),
+                                    }).catch(error => {
+                                        console.error("Failed to restore activity time:", error);
+                                    });
+                                }
+                            }
+                        } else {
+                            startSession();
+                        }
                     }
                 }
             };
@@ -201,7 +254,6 @@ export const StreakDisplay = () => {
         if (isSimulationMode) {
             const testInterval = setInterval(() => {
                 setActiveTime((prev) => {
-                    // Don't cap the time at GOAL_MINUTES to track full usage
                     const newTime = prev + 1 / 60;
                     return newTime;
                 });
@@ -228,10 +280,8 @@ export const StreakDisplay = () => {
             const now = Date.now();
             const idleTime = now - lastActivityTime.current;
 
-            // Continue tracking time even after goal is completed
             if (idleTime < 60000) {
                 setActiveTime((prev) => {
-                    // Don't cap the time at GOAL_MINUTES to track full usage
                     const newTime = prev + 1 / 60;
 
                     sessionStorage.setItem("activeTime", newTime.toString());
@@ -249,7 +299,7 @@ export const StreakDisplay = () => {
                             },
                             body: JSON.stringify({
                                 sessionId: streakInfo.activeSession.id,
-                                activeTime: newTime,
+                                activeTime: Math.min(newTime, 1440),
                             }),
                         }).catch((error) => {
                             console.error(
@@ -500,7 +550,7 @@ export const StreakDisplay = () => {
                                         Daily Goal Progress
                                     </span>
                                     <span className="text-sm text-muted-foreground">
-                                        {activeTime.toFixed(1)}/{GOAL_MINUTES}{" "}
+                                        {typeof activeTime === 'number' && !isNaN(activeTime) ? Math.min(activeTime, 1440).toFixed(1) : '0.0'}/{GOAL_MINUTES}{" "}
                                         minutes
                                     </span>
                                 </div>
@@ -509,8 +559,8 @@ export const StreakDisplay = () => {
                                         className="h-full bg-primary transition-all"
                                         style={{
                                             width: `${
-                                                (activeTime / GOAL_MINUTES) *
-                                                100
+                                                (typeof activeTime === 'number' && !isNaN(activeTime) ? 
+                                                Math.min((activeTime / GOAL_MINUTES) * 100, 100) : 0)
                                             }%`,
                                         }}
                                     />
