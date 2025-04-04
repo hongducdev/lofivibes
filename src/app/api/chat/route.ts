@@ -31,7 +31,7 @@ export async function GET() {
         const messages = await prisma.message.findMany({
             take: 50,
             orderBy: {
-                timestamp: "desc",
+                createdAt: "desc",
             },
         });
 
