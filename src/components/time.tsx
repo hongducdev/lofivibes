@@ -93,34 +93,6 @@ const Time = ({ position = "corner" }: TimeProps) => {
     useEffect(() => {
         const timer = setInterval(() => {
             setTime(new Date());
-            
-            if (typeof window !== 'undefined') {
-                // @ts-expect-error
-                if (window.__updateClockStyle && window.__updateClockStyle !== clockStyle) {
-                    // @ts-expect-error
-                    setClockStyle(window.__updateClockStyle);
-                }
-                
-                // @ts-expect-error
-                if (window.__updateClockBackground !== undefined && 
-                    // @ts-expect-error
-                    window.__updateClockBackground !== disableBackground) {
-                    // @ts-expect-error
-                    setDisableBackground(window.__updateClockBackground);
-                }
-                
-                // @ts-expect-error
-                if (window.__updateClockColor && window.__updateClockColor !== clockColor) {
-                    // @ts-expect-error
-                    setClockColor(window.__updateClockColor);
-                }
-                
-                // @ts-expect-error
-                if (window.__updateClockSize && window.__updateClockSize !== clockSize) {
-                    // @ts-expect-error
-                    setClockSize(window.__updateClockSize);
-                }
-            }
         }, 1000);
 
         return () => clearInterval(timer);

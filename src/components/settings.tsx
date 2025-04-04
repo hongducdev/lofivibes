@@ -126,17 +126,6 @@ const Settings = () => {
             window.dispatchEvent(new Event("pomodoroSettingsChanged"));
             window.dispatchEvent(clockEvent);
             
-            if (typeof window !== 'undefined') {
-                // @ts-expect-error
-                window.__updateClockStyle = appSettings.clockStyle;
-                // @ts-expect-error
-                window.__updateClockBackground = appSettings.disableClockBackground;
-                // @ts-expect-error
-                window.__updateClockColor = appSettings.clockColor;
-                // @ts-expect-error
-                window.__updateClockSize = appSettings.clockSize;
-            }
-            
             toast.success("Settings saved successfully!");
         } catch (error) {
             console.error("Error saving settings:", error);
